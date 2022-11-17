@@ -9,17 +9,30 @@ const int mapw = 16;
 const int maph = 16;
 char map[maph*mapw+1];
 
+const int lootCount = 5;
+
+typedef struct Loot Loot;
+struct Loot
+{
+    int x;
+    int y;
+    Loot *next;
+};
+
 class Game {
 public:
     Game();
-    void clean(); // could be moved to the destructor, however shared_ptr would be needed for the member pointers (c11)
+    //void generateLoot();
+    void clean(); 
     bool init_sdl(const char* title, int width, int height, int bpp);
     void handle_events();
     void draw();
     bool running();
-    void readFile();
+    void readFile(char file[]);
     void putpixel(int x, int y, Uint32 pixel);
     Uint32 getpixel(int itex, int x, int y);
+    
+    int randomInt(int min, int max);
 
 private:
 

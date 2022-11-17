@@ -4,31 +4,34 @@
 #include <iostream>
 #include <fstream>
 
-Uint32 createColor(int r, int g, int b)
-{
-    Uint32 r1 = 255 * g;
+Uint32 createColor(int r, int g, int b) {
+    Uint32 r1 = 255 * r;
     Uint32 b1 = 255 * b;
-    Uint32 g1 = 255 * r;
+    Uint32 g1 = 255 * g;
 
     return 0xFF000000 | r1 | (b1 << 16) | (g1 << 8);
 }
 
-void Game::readFile() {
-//0000222222220000
-	map[0] = 1;
-	map[1] = 2;
-	map[2] = 1;
-	map[3] = 1;
-	map[4] = 2;
-	map[5] = 1;
-	map[6] = 1;
-	map[7] = 2;
-	map[8] = 1;
-	map[9] = 1;
-	map[10] = 1;
-	std::fstream my_file;
-	my_file.open("walls.txt", std::ios::in);
-	if (!my_file) {
+/*void Game::generateLoot() {
+	for(int i = 0; i < lootCount; i++) {
+		int rX = randomInt(1, mapw - 2);
+		int rY = randomInt(1, maph - 2);
+		while(map[int(rX)+int(rY)*mapw] == 'X') {
+			map[int(rX)+int(rY)*mapw] = 'B';
+		}
+	}
+}*/
+
+int Game::randomInt(int min, int max) {
+	int range = max - min + 1;
+	int num = rand() % range + min;
+	return num;
+}
+
+void Game::readFile(char file[]) {
+	std::fstream f;
+	f.open(file, std::ios::in);
+	if (!f) {
 		std::cout << "No such file";
 	}
 	else {
@@ -36,40 +39,42 @@ void Game::readFile() {
 		int i = 0;
 		while (1) {
 			i++;
-			my_file >> ch;
-			if (my_file.eof())
+			f >> ch;
+			if (f.eof())
 				break;
-			std::cout << ch;
+			char w[1] = {ch};
+			strcat(map, w);
 		}
 	}
-	my_file.close();
+	f.close();
 }
 
 void Game::draw() {
-    SDL_FillRect(sdl_screen_, NULL, SDL_MapRGB(sdl_screen_->format, 255, 255, 255)); // TODO check for bpp
+    SDL_FillRect(sdl_screen_, NULL, SDL_MapRGB(sdl_screen_->format, 255, 255, 255));
 
     int w = sdl_screen_->w;
     
-    for (int i=0; i<w; i++) { // draw the "3D" view + visibility cone
+    for (int i=0; i<w; i++) {
         float ca = (1.-i/float(w)) * (angle_-fov/2.) + i/float(w)*(angle_+fov/2.);
         for (float t=0; t<20; t+=.05) {
             float cx = x_+cos(ca)*t;
             float cy = y_+sin(ca)*t;
-
             int idx = int(cx)+int(cy)*mapw;
-            if (map[idx]!=' ') {
-                int h = sdl_screen_->h/t; // height of the current vertical segment to draw
-                cx -= floor(cx+.5);
-                cy -= floor(cy+.5);
-                int tx = (std::abs(cx) > std::abs(cy) ? cx : cy)*texsize; // x-texcoord, we need to determine whether we hit a "vertical" or a "horizontal" wall (w.r.t the map)
-                if (tx<0) tx += texsize;
-                int wall_tex = map[idx]-'0';
-                for (int ty=0; ty<h; ty++) { // we need to scale texsize to h, thus y-texcoord can be computed as ty*64/h
-                    //putpixel(i, ty+(sdl_screen_->h-h)/2, getpixel(wall_tex, tx, (ty*64)/h));
-                    putpixel(i, ty+(sdl_screen_->h-h)/2, 16721545);
-                }
-                break;
-            }
+            int h = sdl_screen_->h/t;
+            if(map[idx] != 'B') {
+		        if(map[idx] != 'X') {
+		            cx -= floor(cx+.5);
+		            cy -= floor(cy+.5);
+		            for (int ty=0; ty<h; ty++) { 
+		                putpixel(i, ty+(sdl_screen_->h-h)/2, 16721545);
+		            }
+		            break;
+		        }
+			} else {
+	            for (int ty=-50; ty<10; ty++) { 
+	                putpixel(i, ty+(sdl_screen_->h-h)/2, 12141545);
+	            }			
+			}
         }
     }
     
@@ -115,13 +120,13 @@ void Game::handle_events() {
     float nx = x_ + walk_*cos(angle_)*.01;
     float ny = y_ + walk_*sin(angle_)*.01;
 
-    if (int(nx)>=0 && int(nx)<mapw && int(ny)>=0 && int(ny)<maph && map[int(nx)+int(ny)*mapw]==' ') {
+    if (int(nx)>=0 && int(nx)<mapw && int(ny)>=0 && int(ny)<maph && map[int(nx)+int(ny)*mapw]=='X') {
         x_ = nx;
         y_ = ny;
     }
 }
 
-Game::Game() : x_(3.456), y_(3.456), angle_(0), turn_(0), walk_(0), 
+Game::Game() : x_(2), y_(2), angle_(0), turn_(0), walk_(0), 
     sdl_screen_(NULL), textures_(NULL), ntextures(0), texsize(0), game_running_(false) {
 }
 
@@ -169,8 +174,6 @@ void Game::clean() {
     SDL_Quit();
 }
 
-// TODO these two functions work for 24 bits per pixel only
-// TODO if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
 Uint32 Game::getpixel(int itex, int x, int y) {
     int texsize = textures_->h;
     if (itex<0 || itex>=ntextures || x<0 || y<0 || x>=texsize || y>=texsize) return 0;
