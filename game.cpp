@@ -1,8 +1,8 @@
 #include <SDL/SDL.h>
 #include <cmath>
-#include "game.h"
 #include <iostream>
 #include <fstream>
+#include "game.h"
 
 Uint32 createColor(int r, int g, int b) {
     Uint32 r1 = 255 * r;

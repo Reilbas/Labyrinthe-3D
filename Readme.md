@@ -1,7 +1,17 @@
-![](https://raw.githubusercontent.com/ssloy/stroll/master/screenshot.png)
+# Labyrinthe 3d
 
-This project is a stub for a small programming project, it shows how to start with SDL and Makefile.
-The code contains a **very** crude and basic raytracer and is not meant to be used as is.
+This is a school project where you can make a 3D maze that is built with an input file, you have to find the exit by moving with the mouse and keyboard. In this maze you will find objects and enemies.
 
-The textures are courtesy of André LaMothe and were initially distrubuted on
-floppy discs with his excellent book "Tricks of the Game-Programming Gurus" published in 1994.
+Incomming features:
+- Proper Maze reader
+- Collectibles and Enemies in maze 
+- Maze maker or Saving your progress
+- Main menu with options
+
+[Base repository from ssloy](https://github.com/ssloy/stroll)
+
+## Build Project
+*TODO
+
+## Create a maze
+*TODO
