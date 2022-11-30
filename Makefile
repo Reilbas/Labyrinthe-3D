@@ -1,22 +1,21 @@
-SYSCONF_LINK = g++
-CPPFLAGS     = -Wall -Wextra -Weffc++ -pedantic -std=c++98 -O3
-LDFLAGS      = 
-LIBS         = -lSDL -lm
+GCC = g++
+CPPFLAGS = -Wall -I include
+LDFLAGS = -L lib -lmingw32 -lSDL2main -lSDL2 -mwindows
+# LDFLAGS = -L lib -lmingw32 -lSDL2main (only for linux)
 
-DESTDIR = ./
-TARGET  = main
+Programme : main.o
+	$(GCC) main.o -o Programme $(LDFLAGS)
 
-OBJECTS := $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+main.o : src/main.cpp
+	$(GCC) $(CPPFLAGS) -c src/main.cpp -o main.o
 
-all: $(DESTDIR)$(TARGET)
+# Suppression des fichiers temporaires.
+clean :
+	del -rf *.o
 
-$(DESTDIR)$(TARGET): $(OBJECTS)
-	$(SYSCONF_LINK) -Wall $(LDFLAGS) -o $(DESTDIR)$(TARGET) $(OBJECTS) $(LIBS)
+# Suppression de tous les fichiers, sauf les sources,
+# en vue d’une reconstruction complète.
+mrproper : clean
+	del Programme
 
-$(OBJECTS): %.o: %.cpp
-	$(SYSCONF_LINK) -Wall $(CPPFLAGS) -c $(CFLAGS) $< -o $@
-
-clean:
-	-rm -f $(OBJECTS)
-	-rm -f $(TARGET)
-
+# g++ -L lib -I include main.c -o Programme -lmingw32 -lSDL2main -lSDL2  -mwindows
