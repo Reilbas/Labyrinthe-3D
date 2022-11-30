@@ -1,11 +1,12 @@
-#include <iostream>
-#include <SDL2/SDL.h>
-#include "Affichage.h"
+#include "Jeu.h"
 
 
 int main(int argv, char** args){
-    Affichage *af = Affichage::getInstance();
-    while(1){
-        af->afficher();
-    }
+    Jeu *jeu = Jeu::getInstance();
+    jeu->run();
+    
+    Jeu::detruire();
+    jeu = NULL;
+    
+    return 0;
 }

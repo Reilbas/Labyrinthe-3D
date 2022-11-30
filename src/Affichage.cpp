@@ -50,4 +50,6 @@ void Affichage::afficher(){
     SDL_UpdateWindowSurface(fenetre);
 }
 
-
+bool Affichage::initialiser(){
+    return estInitialiser;
+}

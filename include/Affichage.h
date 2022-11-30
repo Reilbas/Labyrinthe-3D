@@ -18,12 +18,12 @@ class Affichage {
     // Constructeur et Méthodes
     public:
         static Affichage* getInstance();
+        static bool initialiser();
         static void detruire();
         void afficher();
 
     private:
         Affichage();
         ~Affichage();
-
         bool Init();
 };
