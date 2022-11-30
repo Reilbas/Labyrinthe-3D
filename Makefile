@@ -4,7 +4,7 @@ LDFLAGS = -L lib -lmingw32 -lSDL2main -lSDL2 -mwindows
 # LDFLAGS = -L lib -lmingw32 -lSDL2main (only for linux)
 
 Programme : main.o
-	$(GCC) main.o -o Programme $(LDFLAGS)
+	$(GCC) main.o -o main $(LDFLAGS)
 
 main.o : src/main.cpp
 	$(GCC) $(CPPFLAGS) -c src/main.cpp -o main.o
@@ -16,6 +16,7 @@ clean :
 # Suppression de tous les fichiers, sauf les sources,
 # en vue d’une reconstruction complète.
 mrproper : clean
-	del Programme
+	del main.exe
 
-# g++ -L lib -I include main.c -o Programme -lmingw32 -lSDL2main -lSDL2  -mwindows
+# g++ -L lib -I include ./src/*.cpp -o main -lmingw32 -lSDL2main -lSDL2  -mwindows
+# TODO: mettre a jour le Makefile
