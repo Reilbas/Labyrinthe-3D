@@ -1,14 +1,19 @@
 // Class Singleton qui va gerer l'état du jeu (gerer la boucle d'affichage, etc...)
 #include <SDL2/SDL.h>
 #include "Affichage.h"
+#include "Horloge.h"
 
 class Jeu {
 
     // Attributs
+    public:
+        static const int FRAMERATE = 60;
+
     private:
         static Jeu* instance;
         bool quitter;
-        Affichage* af;
+        Affichage* affichage;
+        Horloge* horloge;
         SDL_Event evenements;
 
     // Constructeur et Méthodes
