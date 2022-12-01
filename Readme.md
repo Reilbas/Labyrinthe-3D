@@ -16,7 +16,14 @@ Incomming features:
 - Main menu with options
 
 ## Build Project
-*TODO
+*Makefile update comming soon* 
+
+build (linux): ``$ g++ -L lib -I include ./src/*.cpp -o main -lSDL2main -lSDL2``
+
+build (windows): ``$ g++ -L lib -I include ./src/*.cpp -o main -lmingw32 -lSDL2main -lSDL2  -mwindows``
+
+launch app: ``$ ./main``
+
 
 ## Create a maze
-*TODO
+***TODO**
