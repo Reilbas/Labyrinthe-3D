@@ -46,7 +46,6 @@ void Jeu::run(){
         // Affichage
         if(horloge->getDelta() >= (1.0f / FRAMERATE)){
             affichage->afficher();
-            //std::cout << horloge->getDelta() << std::endl;
             horloge->reset();
         }
     }

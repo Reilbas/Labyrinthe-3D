@@ -17,11 +17,14 @@ void Affichage::detruire(){
 }
 
 Affichage::Affichage(){
-    surface = NULL;
+    renderer = NULL;
     estInitialiser = Init();
 }
 
 Affichage::~Affichage(){
+    SDL_DestroyRenderer(renderer);
+    renderer = NULL;
+
     SDL_DestroyWindow(fenetre);
     fenetre = NULL;
 
@@ -41,13 +44,22 @@ bool Affichage::Init() {
         return false;
     }
 
-    surface = SDL_GetWindowSurface(fenetre);
+    renderer = SDL_CreateRenderer(fenetre, -1, 0);
 
     return true;
 }
 
 void Affichage::afficher(){
-    SDL_UpdateWindowSurface(fenetre);
+    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+    SDL_RenderClear(renderer);
+
+    //TODO rendering code goes here
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderDrawLine(renderer, 50, 50, 100, 100);
+
+    //render window
+    SDL_RenderPresent(renderer);
+
 }
 
 bool Affichage::initialiser(){

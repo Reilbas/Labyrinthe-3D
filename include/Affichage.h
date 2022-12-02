@@ -13,7 +13,7 @@ class Affichage {
         static Affichage* instance;
         static bool estInitialiser;
         SDL_Window* fenetre;
-        SDL_Surface* surface;
+        SDL_Renderer * renderer;
 
     // Constructeur et Méthodes
     public:
