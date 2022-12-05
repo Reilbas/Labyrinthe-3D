@@ -42,7 +42,9 @@ void Jeu::run(){
             }
         }
         // Mise a jour des valeurs (interne)
-
+        /*
+            Gestion des donnéees
+        */
         // Affichage
         if(horloge->getDelta() >= (1.0f / FRAMERATE)){
             affichage->afficher();

@@ -53,7 +53,10 @@ void Affichage::afficher(){
     SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
     SDL_RenderClear(renderer);
 
-    //TODO rendering code goes here
+    //dessine tout ce qui est dans la liste de truc a dessiner
+    /*
+        pour tt objets a dessiner -> le dessine
+    */
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderDrawLine(renderer, 50, 50, 100, 100);
 

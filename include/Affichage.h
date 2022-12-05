@@ -14,6 +14,7 @@ class Affichage {
         static bool estInitialiser;
         SDL_Window* fenetre;
         SDL_Renderer * renderer;
+        // TODO Liste d'objet pointeur
 
     // Constructeur et Méthodes
     public:
