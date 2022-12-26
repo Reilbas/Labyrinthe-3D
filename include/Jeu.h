@@ -2,6 +2,9 @@
 #include <SDL2/SDL.h>
 #include "Affichage.h"
 #include "Horloge.h"
+#include "Joueur.h"
+#include "Environement.h"
+#include "ReaderWriter.h"
 
 class Jeu {
 
