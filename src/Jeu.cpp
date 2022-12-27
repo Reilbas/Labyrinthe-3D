@@ -43,8 +43,29 @@ void Jeu::run(){
             horloge->update();
             // Gestion des evenements
             while(SDL_PollEvent(&evenements) != 0){
-                if(evenements.type == SDL_QUIT){
+                switch (evenements.type){
+                case SDL_QUIT:
                     quitter = true;
+                    break;
+                case SDL_KEYDOWN:
+                    switch (evenements.key.keysym.sym){
+                        case SDLK_LEFT:
+                            std::cout << "gauche\n";
+                            break;
+                        case SDLK_RIGHT:
+                            std::cout << "droite\n";
+                            break;
+                        case SDLK_UP:
+                            std::cout << "haut\n";
+                            break;
+                        case SDLK_DOWN:
+                            std::cout << "bas\n";
+                            break;
+                    }
+                    break;
+                case SDL_MOUSEMOTION:
+                    std::cout << "X:" << evenements.motion.x << " Y:" << evenements.motion.y << "\n"; 
+                    break;
                 }
             }
             // Mise a jour des valeurs (interne)

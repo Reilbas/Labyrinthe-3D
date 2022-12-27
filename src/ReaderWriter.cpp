@@ -24,14 +24,3 @@ char** ReaderWriter::retrievingData(std::string nomFic, int* L, int* l){
         return nullptr;
     }
 }
-
-/*
-int main(){
-    int L, l;
-    char** env = ReaderWriter::retrievingData("test.txt", &L, &l);
-    if(env != nullptr){
-        std::cout << L << l;
-    }
-    return 0;
-}
-*/

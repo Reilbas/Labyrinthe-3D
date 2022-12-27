@@ -35,7 +35,3 @@ float Element::getY(){
 float Element::getZ(){
     return posX; 
 }
-
-Element::~Element(){
-    std::cout << "destruction d'un element\n"; 
-}

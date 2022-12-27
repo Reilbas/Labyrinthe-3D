@@ -20,6 +20,5 @@ void Joueur::rotate(float x, float y){
 }
 
 Joueur::~Joueur(){
-    std::cout << "destruction du joueur\n";
     //delete la cam
 }

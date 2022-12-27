@@ -90,20 +90,3 @@ void Environement::print(){
       std::cout << e.getX() << " " << e.getY() << " " << e.getZ() << " " << std::endl;
     }
 }
-
-int main(){
-    Joueur* j = new Joueur();
-    Environement* e = new Environement(j);
-    
-    delete e;
-    delete j;
-    return 0;
-}
-
-/*
-.push_back
-.clears
-.erase
-
-use an array const -------&
-*/

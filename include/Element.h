@@ -12,7 +12,6 @@ class Element {
     public:
         Element();
         Element(float x, float y, float z);
-        ~Element();
         void setPos(float x, float y, float z);
         void translate(float x, float y, float z);
         float getX();
