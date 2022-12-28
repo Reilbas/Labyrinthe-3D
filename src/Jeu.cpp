@@ -33,7 +33,7 @@ Jeu::~Jeu(){
 
 void Jeu::run(){
     int L, l;
-    char** data = ReaderWriter::retrievingData("test.txt", &L, &l);
+    char** data = ReaderWriter::retrievingLevel("test.txt", &L, &l);
     if(data != nullptr){
         Joueur* joueur = new Joueur();
         Environement* env = new Environement(joueur, data, L, l);

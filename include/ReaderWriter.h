@@ -8,7 +8,7 @@
 
 class ReaderWriter {
     public:
-        static char** retrievingData(std::string nomFic, int* L, int* l);
+        static char** retrievingLevel(std::string nomFic, int* L, int* l);
         //static void saveData();
 };
 

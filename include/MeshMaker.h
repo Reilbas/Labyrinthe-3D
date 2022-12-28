@@ -3,13 +3,16 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
+#include <fstream>
+#include <sstream>
 
-struct vertex {
+struct vec3d {
 	float x, y, z;
 };
 
 struct triangle {
-	vertex p[3];
+	vec3d p[3];
 };
 
 struct mesh {
@@ -19,8 +22,8 @@ struct mesh {
 class MeshMaker {
     // Constructeur et Méthodes
     public:
-        static mesh Pyramide(float x, float y, float z);
         static mesh Cube(float x, float y, float z);
+        static mesh fromObj(std::string nomfic,float x, float y, float z, float size);
 };
 
 #endif

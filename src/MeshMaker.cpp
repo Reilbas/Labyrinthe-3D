@@ -30,32 +30,41 @@ mesh MeshMaker::Cube(float x, float y, float z){
     return m;
 }
 
-mesh MeshMaker::Pyramide(float x, float y, float z){
-    mesh m;
-    m.tris = {
-    	// SOUTH
-		{ x, y, z,                  x, y, (z+0.125f),                 (x+0.125f), y, (z+0.125f)           },
-		{ x, y, z,                  (x+0.125f), y, (z+0.125f),          (x+0.125f), y, z                  },
+mesh MeshMaker::fromObj(std::string nomfic, float x, float y, float z ,float size){
+	mesh m;
 
-		// EAST                                                      
-		{ (x+0.125f), y, z,           (x+0.125f), y, (z+0.125f),          (x+0.125f), (y+0.125f), (z+0.125f)    },
-		{ (x+0.125f), y, z,           (x+0.125f), (y+0.125f), (z+0.125f),   (x+0.125f), (y+0.125f), z           },
+	std::ifstream f(nomfic);
+	if (!f.is_open())
+		return m;
 
-		// NORTH                                                     
-		{ (x+0.125f), (y+0.125f), z,    (x+0.125f), (y+0.125f), (z+0.125f),   x, (y+0.125f), (z+0.125f)           },
-		{ (x+0.125f), (y+0.125f), z,    x, (y+0.125f), (z+0.125f),          x, (y+0.125f), z                  },
+	// Local cache of verts
+	std::vector<vec3d> verts;
 
-		// WEST                                                      
-		{ x, (y+0.125f), z,           x, (y+0.125f), (z+0.125f),          x, y, (z+0.125f)                  },
-		{ x, (y+0.125f), z,           x, y, (z+0.125f),                 x, y, z                         },
+	while (!f.eof()){
+		char line[128];
+		f.getline(line, 128);
 
-		// TOP                                                       
-		{ x, y, (z+0.125f),           x, (y+0.125f), (z+0.125f),          (x+0.125f), (y+0.125f), (z+0.125f)    },
-		{ x, y, (z+0.125f),           (x+0.125f), (y+0.125f), (z+0.125f),   (x+0.125f), y, (z+0.125f)           },
+		std::stringstream s;
+		s << line;
 
-		// BOTTOM                                                    
-		{ (x+0.125f), (y+0.125f), z,    x, (y+0.125f), z,                 x, y, z                         },
-		{ (x+0.125f), (y+0.125f), z,    x, y, z,                        (x+0.125f), y, z                  },
-    };
+		char junk;
+
+		if (line[0] == 'v'){
+			vec3d v;
+			s >> junk >> v.x >> v.y >> v.z;
+
+			v.x = x + (size * v.x);
+			v.y = y + (size * v.y);
+			v.z = z + (size * v.z);
+			verts.push_back(v);
+		}
+
+		if (line[0] == 'f'){
+			int f[3];
+			s >> junk >> f[0] >> f[1] >> f[2];
+			m.tris.push_back({ verts[f[0] - 1], verts[f[2] - 1], verts[f[1] - 1] });
+		}
+	}
+
     return m;
 }

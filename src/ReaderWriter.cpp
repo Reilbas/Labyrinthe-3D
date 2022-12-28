@@ -1,6 +1,6 @@
 #include "ReaderWriter.h"
 
-char** ReaderWriter::retrievingData(std::string nomFic, int* L, int* l){
+char** ReaderWriter::retrievingLevel(std::string nomFic, int* L, int* l){
     std::vector<std::string> lstr;
     std::string line;
     std::ifstream fic (nomFic);
