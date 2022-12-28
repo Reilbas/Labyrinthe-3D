@@ -72,53 +72,99 @@ void Affichage::dessinerMur(int x, int y){
 }
 
 void Affichage::afficher(){
-    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
-    //dessine tout ce qui est dans la liste de truc a dessiner
-    /*
-        pour tt objets a dessiner -> le dessine
-    */
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    mesh cube = MeshMaker::Cube(0.0f, 0.0f, 0.0f);
+
+    mesh cube = MeshMaker::fromObj("cube.obj",(3*std::sin(n))+0.0f, 3.0f, (2*std::sin(n*1.7f))+0.0f, 0.5f);
+    //mesh cube = MeshMaker::Cube((3*std::sin(n))+0.0f, 3.0f, (2*std::sin(n*1.7f))+0.0f);
+
+    std::vector<triangle> Ltri;
+
     for(auto tri : cube.tris) {
-        triangle triProjected, triTranslated;
+        triangle triProjected;
 
-        triTranslated = tri;
-        triTranslated.p[0].y = tri.p[0].y + 3.0f;
-        triTranslated.p[1].y = tri.p[1].y + 3.0f;
-        triTranslated.p[2].y = tri.p[2].y + 3.0f;
+        vec3d normal, l1, l2;
 
-        MultiplyMatrixVector(triTranslated.p[0], triProjected.p[0], matriceProj);
-        MultiplyMatrixVector(triTranslated.p[1], triProjected.p[1], matriceProj);
-        MultiplyMatrixVector(triTranslated.p[2], triProjected.p[2], matriceProj);
+        l1.x = tri.p[1].x - tri.p[0].x;
+        l1.y = tri.p[1].y - tri.p[0].y;
+        l1.z = tri.p[1].z - tri.p[0].z;
 
-        triProjected.p[0].x += 1.0f;
-        triProjected.p[0].z += 1.0f;
+        l2.x = tri.p[2].x - tri.p[0].x;
+        l2.y = tri.p[2].y - tri.p[0].y;
+        l2.z = tri.p[2].z - tri.p[0].z;
 
-        triProjected.p[1].x += 1.0f;
-        triProjected.p[1].z += 1.0f;
+        normal.x = l1.z * l2.y - l1.y * l2.z;
+        normal.z = l1.y * l2.x - l1.x * l2.y;
+        normal.y = l1.x * l2.z - l1.z * l2.x;
 
-        triProjected.p[2].x += 1.0f;
-        triProjected.p[2].z += 1.0f;
+        float l = std::sqrt(normal.x * normal.x + normal.y * normal.y + normal.z * normal.z);
+        normal.x /= l;
+        normal.y /= l;
+        normal.z /= l;
+
+        // pourrait être deplacer
+        float li = std::sqrt(lumiere.x * lumiere.x + lumiere.y * lumiere.y + lumiere.z * lumiere.z);
+        lumiere.x /= l;
+        lumiere.y /= l;
+        lumiere.z /= l;
+
+        //float dp = normal.x * lumiere.x + normal.y * lumiere.y + normal.z * lumiere.z;
+
+        if( normal.x * (tri.p[0].x - vCam.x) + normal.y * (tri.p[0].y - vCam.y) +normal.z * (tri.p[0].z - vCam.z) < 0.0f ) {
+            MultiplyMatrixVector(tri.p[0], triProjected.p[0], matriceProj);
+            MultiplyMatrixVector(tri.p[1], triProjected.p[1], matriceProj);
+            MultiplyMatrixVector(tri.p[2], triProjected.p[2], matriceProj);
+
+            triProjected.p[0].x += 1.0f;
+            triProjected.p[0].z += 1.0f;
+
+            triProjected.p[1].x += 1.0f;
+            triProjected.p[1].z += 1.0f;
+
+            triProjected.p[2].x += 1.0f;
+            triProjected.p[2].z += 1.0f;
+            
+            triProjected.p[0].x *= 0.5f * (float)ECRAN_LARGEUR;
+            triProjected.p[0].z *= 0.5f * (float)ECRAN_HAUTEUR;
+            triProjected.p[1].x *= 0.5f * (float)ECRAN_LARGEUR;
+            triProjected.p[1].z *= 0.5f * (float)ECRAN_HAUTEUR;
+            triProjected.p[2].x *= 0.5f * (float)ECRAN_LARGEUR;
+            triProjected.p[2].z *= 0.5f * (float)ECRAN_HAUTEUR;
+            
+            Ltri.push_back(triProjected);
+        }
         
-        triProjected.p[0].x *= 0.5f * (float)ECRAN_LARGEUR;
-        triProjected.p[0].z *= 0.5f * (float)ECRAN_HAUTEUR;
-        triProjected.p[1].x *= 0.5f * (float)ECRAN_LARGEUR;
-        triProjected.p[1].z *= 0.5f * (float)ECRAN_HAUTEUR;
-        triProjected.p[2].x *= 0.5f * (float)ECRAN_LARGEUR;
-        triProjected.p[2].z *= 0.5f * (float)ECRAN_HAUTEUR;
-
-        SDL_RenderDrawLine(renderer, triProjected.p[0].x, triProjected.p[0].z,
-        triProjected.p[1].x, triProjected.p[1].z);
-        SDL_RenderDrawLine(renderer, triProjected.p[1].x, triProjected.p[1].z,
-        triProjected.p[2].x, triProjected.p[2].z);
-        SDL_RenderDrawLine(renderer, triProjected.p[2].x, triProjected.p[2].z,
-        triProjected.p[0].x, triProjected.p[0].z);
     }
 
-    //SDL_RenderDrawLine(renderer, 50, 50, 100, 100);
+    sort(Ltri.begin(), Ltri.end(), [](triangle &t1, triangle &t2){
+        float z1 = (t1.p[0].y + t1.p[1].y + t1.p[2].y) / 3.0f;
+        float z2 = (t2.p[0].y + t2.p[1].y + t2.p[2].y) / 3.0f;
+        return z1 > z2;
+    });
 
+    //Affichage
+    for(auto &tri: Ltri){
+        // face
+        //Uint8 gradient = (Uint8) std::round(dp*230);
+        SDL_Color color = { 255, 255, 0, 255 };
+        
+        std::vector<SDL_Vertex> verts = {
+            { SDL_FPoint{ tri.p[0].x, tri.p[0].z }, color },
+            { SDL_FPoint{ tri.p[1].x, tri.p[1].z }, color },
+            { SDL_FPoint{ tri.p[2].x, tri.p[2].z }, color }
+        };
+        SDL_RenderGeometry( renderer, nullptr, verts.data(), verts.size(), nullptr, 0);
+        // outline
+        SDL_RenderDrawLine(renderer, tri.p[0].x, tri.p[0].z,
+        tri.p[1].x, tri.p[1].z);
+        SDL_RenderDrawLine(renderer, tri.p[1].x, tri.p[1].z,
+        tri.p[2].x, tri.p[2].z);
+        SDL_RenderDrawLine(renderer, tri.p[2].x, tri.p[2].z,
+        tri.p[0].x, tri.p[0].z);
+    }
+    n+= 0.05f;
     // render window
     SDL_RenderPresent(renderer);
 }
@@ -131,14 +177,13 @@ void Affichage::setJoueur(Joueur* j){
     joueur = j;
 }
 
-void Affichage::MultiplyMatrixVector(vertex &i, vertex &o, mat4x4 &m){
+void Affichage::MultiplyMatrixVector(vec3d &i, vec3d &o, mat4x4 &m){
     o.x = i.x * m.m[0][0] + i.y * m.m[1][0] + i.z * m.m[2][0] + m.m[3][0];
     o.y = i.x * m.m[0][1] + i.y * m.m[1][1] + i.z * m.m[2][1] + m.m[3][1];
     o.z = i.x * m.m[0][2] + i.y * m.m[1][2] + i.z * m.m[2][2] + m.m[3][2];
     float w = i.x * m.m[0][3] + i.y * m.m[1][3] + i.z * m.m[2][3] + m.m[3][3];
 
-    if (w != 0.0f)
-    {
+    if (w != 0.0f){
         o.x /= w;
         o.y /= w;
         o.z /= w;
