@@ -9,8 +9,7 @@ class Joueur : public Element {
     private:
         int pv; // point de vie
         float rotX, rotY;
-        //Camera vision;
-
+        
     // Constructeur et Méthodes
     public:
         Joueur();

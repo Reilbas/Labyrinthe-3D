@@ -51,7 +51,7 @@ Environement::Environement(Joueur* joueur, char** env, int Long, int larg){
             case 'I':
             case 'i':
                 // placement des objets
-                objets.push_back({(i+0.5f), (j+0.5f), 0});
+                objets.push_back({(i+0.5f), (j+0.5f), 0, MeshMaker::Pyramide((i+0.5f), (j+0.5f), 0)});
                 break;
             case 'P':
             case 'p':

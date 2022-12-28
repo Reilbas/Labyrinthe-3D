@@ -1,11 +1,11 @@
 #include "Joueur.h"
 
-Joueur::Joueur(){
+Joueur::Joueur() : Element({}) {
     rotX = 0.0f;
     rotY = 0.0f;
 }
 
-Joueur::Joueur(float x, float y, float z) : Element(x, y, z) {
+Joueur::Joueur(float x, float y, float z) : Element(x, y, z, {}) {
     rotX = 0.0f;
     rotY = 0.0f;
 }

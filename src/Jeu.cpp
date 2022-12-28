@@ -37,6 +37,7 @@ void Jeu::run(){
     if(data != nullptr){
         Joueur* joueur = new Joueur();
         Environement* env = new Environement(joueur, data, L, l);
+        affichage->setJoueur(joueur);
         free(data);
         while(!quitter){
             // Mise à jour de l'horloge
