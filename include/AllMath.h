@@ -29,6 +29,8 @@ class AllMath {
         static mat4x4 matXmat(mat4x4 &m1, mat4x4 &m2);
         static mat4x4 matPointAt(vec3d &pos, vec3d &target, vec3d &up);
         static mat4x4 matrixQuickInverse(mat4x4 &m);
+        static vec3d vectorIntersectPlane(vec3d &plane_p, vec3d &plane_n, vec3d &lineStart, vec3d &lineEnd);
+        static int triangleClipAgainstPlane(vec3d plane_p, vec3d plane_n, triangle &in_tri, triangle &out_tri1, triangle &out_tri2);
 };
 
 #endif

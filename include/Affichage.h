@@ -4,6 +4,7 @@
 #include <vector>
 #include <math.h>
 #include "Joueur.h"
+#include "Element.h"
 #include "MeshMaker.h"
 #include "AllMath.h"
 
@@ -22,8 +23,6 @@ class Affichage {
 
         std::vector<Element> renderList;
         mat4x4 matriceProj;
-
-        vec3d vCam = {0.0f,0.0f,0.0f};
 
         vec3d lumiere = {0.0f,0.0f,-1.0f};
 
