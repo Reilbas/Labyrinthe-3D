@@ -3,14 +3,9 @@
 #include <SDL2/SDL.h>
 #include <vector>
 #include <math.h>
-#include <algorithm>
 #include "Joueur.h"
 #include "MeshMaker.h"
-
-struct mat4x4
-{
-	float m[4][4] = { 0 };
-};
+#include "AllMath.h"
 
 class Affichage {
     // Attributs
@@ -27,9 +22,10 @@ class Affichage {
 
         std::vector<Element> renderList;
         mat4x4 matriceProj;
-        vec3d vCam = {0.0f,-1.0f,0.0f};
 
-        vec3d lumiere = {-1.0f,-1.0f,0.0f};
+        vec3d vCam = {0.0f,0.0f,0.0f};
+
+        vec3d lumiere = {0.0f,0.0f,-1.0f};
 
         float n = 0;
 
@@ -47,5 +43,4 @@ class Affichage {
         Affichage();
         ~Affichage();
         bool Init();
-        void MultiplyMatrixVector(vec3d &i, vec3d &o, mat4x4 &m);
 };

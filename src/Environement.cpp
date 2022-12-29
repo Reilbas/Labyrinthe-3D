@@ -22,8 +22,7 @@ Environement::Environement(Joueur* joueur){
             murs[i][j] = m[i][j];
         }
     }
-    // ---------------
-    joueur->setPos(2.5f, 2.5f, 0.5f);
+    joueur->setPos(2.5f, 0.5f, 2.5f);
 }
 
 Environement::Environement(Joueur* joueur, char** env, int Long, int larg){
@@ -51,12 +50,12 @@ Environement::Environement(Joueur* joueur, char** env, int Long, int larg){
             case 'I':
             case 'i':
                 // placement des objets
-                objets.push_back({(i+0.5f), (j+0.5f), 0, MeshMaker::Cube((i+0.5f), (j+0.5f), 0)}); // changer le mesh
+                objets.push_back({(i+0.5f), 0.0f, (j+0.5f), MeshMaker::Cube((i+0.5f), 0.0f, (j+0.5f))}); // changer le mesh
                 break;
             case 'P':
             case 'p':
                 // placement du joueur
-                joueur->setPos((i+0.5f), (j+0.5f), 0.5f);
+                joueur->setPos((i+0.5f), 0.0f, (j+0.5f));
                 break;
             case 'E':
             case 'e':

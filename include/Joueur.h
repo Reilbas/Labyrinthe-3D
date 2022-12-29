@@ -6,7 +6,7 @@
 
 class Joueur : public Element {
     // Attributs
-    private:
+    public:
         int pv; // point de vie
         float rotX, rotY;
         

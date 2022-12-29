@@ -7,7 +7,7 @@
 
 class Element {
     // Attributs
-    protected:
+    public:
         float posX, posY, posZ;
         mesh geometry;
 

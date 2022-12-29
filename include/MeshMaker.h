@@ -8,11 +8,15 @@
 #include <sstream>
 
 struct vec3d {
-	float x, y, z;
+	float x = 0;
+    float y = 0;
+    float z = 0;
+    float w = 1;
 };
 
 struct triangle {
 	vec3d p[3];
+    float dp;
 };
 
 struct mesh {

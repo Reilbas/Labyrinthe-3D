@@ -62,7 +62,7 @@ mesh MeshMaker::fromObj(std::string nomfic, float x, float y, float z ,float siz
 		if (line[0] == 'f'){
 			int f[3];
 			s >> junk >> f[0] >> f[1] >> f[2];
-			m.tris.push_back({ verts[f[0] - 1], verts[f[2] - 1], verts[f[1] - 1] });
+			m.tris.push_back({ verts[f[0] - 1], verts[f[1] - 1], verts[f[2] - 1] });
 		}
 	}
 

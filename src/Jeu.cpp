@@ -37,6 +37,9 @@ void Jeu::run(){
     if(data != nullptr){
         Joueur* joueur = new Joueur();
         Environement* env = new Environement(joueur, data, L, l);
+
+        joueur->setPos(0.0f,0.0f,-1.0f);
+
         affichage->setJoueur(joueur);
         free(data);
         while(!quitter){
@@ -50,22 +53,48 @@ void Jeu::run(){
                     break;
                 case SDL_KEYDOWN:
                     switch (evenements.key.keysym.sym){
-                        case SDLK_LEFT:
-                            std::cout << "gauche\n";
+                        // deplacement horizontal
+                        case SDLK_q:
+                            joueur->posX -= 0.5f;
+                            std::cout << "X:" << joueur->posX << " Y:" << joueur->posY << " Z:" << joueur->posZ << "\n";
                             break;
-                        case SDLK_RIGHT:
-                            std::cout << "droite\n";
+                        case SDLK_d:
+                            joueur->posX += 0.5f;
+                            std::cout << "X:" << joueur->posX << " Y:" << joueur->posY << " Z:" << joueur->posZ << "\n";
                             break;
-                        case SDLK_UP:
-                            std::cout << "haut\n";
+                        case SDLK_z:
+                            joueur->posY += 0.5f;
+                            std::cout << "X:" << joueur->posX << " Y:" << joueur->posY << " Z:" << joueur->posZ << "\n";
                             break;
-                        case SDLK_DOWN:
-                            std::cout << "bas\n";
+                        case SDLK_s:
+                            joueur->posY -= 0.5f;
+                            std::cout << "X:" << joueur->posX << " Y:" << joueur->posY << " Z:" << joueur->posZ << "\n";
+                            break;
+
+                        // deplacement vertical
+                        /*
+                        case SDLK_z:
+                            joueur->posY += 1.0f;
+                            std::cout << "X:" << joueur->posX << " Y:" << joueur->posY << " Z:" << joueur->posZ << "\n";
+                            break;
+                        case SDLK_s:
+                            joueur->posY -= 1.0f;
+                            std::cout << "X:" << joueur->posX << " Y:" << joueur->posY << " Z:" << joueur->posZ << "\n";
+                            break;
+                        */
+                        // deplacement orientation
+                        case SDLK_a:
+                            joueur->rotY += 0.5f;
+                            std::cout << "rotY:" << joueur->rotY << "\n";
+                            break;
+                        case SDLK_e:
+                            joueur->rotY -= 0.5f;
+                            std::cout << "rotY:" << joueur->rotY << "\n";
                             break;
                     }
                     break;
                 case SDL_MOUSEMOTION:
-                    std::cout << "X:" << evenements.motion.x << " Y:" << evenements.motion.y << "\n"; 
+                    //std::cout << "X:" << evenements.motion.x << " Y:" << evenements.motion.y << "\n"; 
                     break;
                 }
             }

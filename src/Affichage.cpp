@@ -47,18 +47,7 @@ bool Affichage::Init() {
         return false;
     }
 
-    float fNear = 0.1f;
-    float fFar = 1000.0f;
-    float fFov = 90.0f;
-    float fAspectRatio = (float)ECRAN_HAUTEUR / (float)ECRAN_LARGEUR;
-    float fFovRad = 1.0f / tanf(fFov * 0.5f / 180.0f * PI);
-
-    matriceProj.m[0][0] = fAspectRatio * fFovRad;
-    matriceProj.m[1][1] = fFar / (fFar - fNear);
-    matriceProj.m[2][2] = fFovRad;
-    matriceProj.m[3][1] = (-fFar * fNear) / (fFar - fNear);
-    matriceProj.m[1][3] = 1.0f;
-    matriceProj.m[3][3] = 0.0f;
+    matriceProj = AllMath::makeProjMatrix(90.0f, (float)ECRAN_HAUTEUR / (float)ECRAN_LARGEUR, 0.1f, 1000.0f);
 
     renderer = SDL_CreateRenderer(fenetre, -1, 0);
 
@@ -72,97 +61,110 @@ void Affichage::dessinerMur(int x, int y){
 }
 
 void Affichage::afficher(){
+    vCam = {joueur->posX, joueur->posY, joueur->posZ};
+    mat4x4 matCamRot = AllMath::rotMatY(joueur->rotY);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    mesh cube = MeshMaker::fromObj("cube.obj",0.0f, 0.0f, 0.0f, 1.0f);
 
-    mesh cube = MeshMaker::fromObj("cube.obj",(3*std::sin(n))+0.0f, 3.0f, (2*std::sin(n*1.7f))+0.0f, 0.5f);
-    //mesh cube = MeshMaker::Cube((3*std::sin(n))+0.0f, 3.0f, (2*std::sin(n*1.7f))+0.0f);
+    mat4x4 matRotX = AllMath::rotMatX(n/4);
+    mat4x4 matRotZ = AllMath::rotMatZ(n/2);
+
+    mat4x4 matTrans = AllMath::transMat(0.0f, 0.0f, 3.0f);
+
+    mat4x4 matW = AllMath::identMatrix();
+    matW = AllMath::matXmat(matRotZ, matRotX);
+    matW = AllMath::matXmat(matW, matTrans);
+
+    //-----------
+    vec3d vUp = {0.0f,1.0f,0.0f};
+    vec3d vTarget = {0.0f,0.0f,1.0f};
+
+    vec3d vlookDir =  AllMath::matrixMultVector(matCamRot, vTarget);
+    vTarget = AllMath::addVector(vCam, vlookDir);
+    //-----------
+
+    mat4x4 matCam = AllMath::matPointAt(vCam, vTarget, vUp);
+    mat4x4 matView = AllMath::matrixQuickInverse(matCam);
 
     std::vector<triangle> Ltri;
-
     for(auto tri : cube.tris) {
-        triangle triProjected;
+        triangle triProjected, triTransfo, triView;
+
+        triTransfo.p[0] = AllMath::matrixMultVector(matW, tri.p[0]);
+        triTransfo.p[1] = AllMath::matrixMultVector(matW, tri.p[1]);
+        triTransfo.p[2] = AllMath::matrixMultVector(matW, tri.p[2]);
 
         vec3d normal, l1, l2;
 
-        l1.x = tri.p[1].x - tri.p[0].x;
-        l1.y = tri.p[1].y - tri.p[0].y;
-        l1.z = tri.p[1].z - tri.p[0].z;
+        l1 = AllMath::subVector(triTransfo.p[1], triTransfo.p[0]);
+        l2 = AllMath::subVector(triTransfo.p[2], triTransfo.p[0]);
 
-        l2.x = tri.p[2].x - tri.p[0].x;
-        l2.y = tri.p[2].y - tri.p[0].y;
-        l2.z = tri.p[2].z - tri.p[0].z;
+        normal = AllMath::crossProd(l1, l2);
+        normal = AllMath::norm(normal);
 
-        normal.x = l1.z * l2.y - l1.y * l2.z;
-        normal.z = l1.y * l2.x - l1.x * l2.y;
-        normal.y = l1.x * l2.z - l1.z * l2.x;
+        vec3d vCamRay = AllMath::subVector(triTransfo.p[0], vCam);
 
-        float l = std::sqrt(normal.x * normal.x + normal.y * normal.y + normal.z * normal.z);
-        normal.x /= l;
-        normal.y /= l;
-        normal.z /= l;
+        if(AllMath::dotProd(normal, vCamRay) < 0.0f ) {
+        //if(true) {
+            vec3d li = AllMath::norm(lumiere);
+            triProjected.dp = std::max(0.1f, AllMath::dotProd(li, normal));
 
-        // pourrait être deplacer
-        float li = std::sqrt(lumiere.x * lumiere.x + lumiere.y * lumiere.y + lumiere.z * lumiere.z);
-        lumiere.x /= l;
-        lumiere.y /= l;
-        lumiere.z /= l;
+            triView.p[0] = AllMath::matrixMultVector(matView, triTransfo.p[0]);
+            triView.p[1] = AllMath::matrixMultVector(matView, triTransfo.p[1]);
+            triView.p[2] = AllMath::matrixMultVector(matView, triTransfo.p[2]);
 
-        //float dp = normal.x * lumiere.x + normal.y * lumiere.y + normal.z * lumiere.z;
+            // 3D -> 2D
+            triProjected.p[0] = AllMath::matrixMultVector(matriceProj, triView.p[0]);
+            triProjected.p[1] = AllMath::matrixMultVector(matriceProj, triView.p[1]);
+            triProjected.p[2] = AllMath::matrixMultVector(matriceProj, triView.p[2]);
 
-        if( normal.x * (tri.p[0].x - vCam.x) + normal.y * (tri.p[0].y - vCam.y) +normal.z * (tri.p[0].z - vCam.z) < 0.0f ) {
-            MultiplyMatrixVector(tri.p[0], triProjected.p[0], matriceProj);
-            MultiplyMatrixVector(tri.p[1], triProjected.p[1], matriceProj);
-            MultiplyMatrixVector(tri.p[2], triProjected.p[2], matriceProj);
+            triProjected.p[0] = AllMath::divVector(triProjected.p[0], triProjected.p[0].w);
+            triProjected.p[1] = AllMath::divVector(triProjected.p[1], triProjected.p[1].w);
+            triProjected.p[2] = AllMath::divVector(triProjected.p[2], triProjected.p[2].w);
 
-            triProjected.p[0].x += 1.0f;
-            triProjected.p[0].z += 1.0f;
-
-            triProjected.p[1].x += 1.0f;
-            triProjected.p[1].z += 1.0f;
-
-            triProjected.p[2].x += 1.0f;
-            triProjected.p[2].z += 1.0f;
-            
+            vec3d offset = {1, 1, 0};
+            triProjected.p[0] = AllMath::addVector(triProjected.p[0], offset);
+            triProjected.p[1] = AllMath::addVector(triProjected.p[1], offset);
+            triProjected.p[2] = AllMath::addVector(triProjected.p[2], offset);
             triProjected.p[0].x *= 0.5f * (float)ECRAN_LARGEUR;
-            triProjected.p[0].z *= 0.5f * (float)ECRAN_HAUTEUR;
+            triProjected.p[0].y *= 0.5f * (float)ECRAN_HAUTEUR;
             triProjected.p[1].x *= 0.5f * (float)ECRAN_LARGEUR;
-            triProjected.p[1].z *= 0.5f * (float)ECRAN_HAUTEUR;
+            triProjected.p[1].y *= 0.5f * (float)ECRAN_HAUTEUR;
             triProjected.p[2].x *= 0.5f * (float)ECRAN_LARGEUR;
-            triProjected.p[2].z *= 0.5f * (float)ECRAN_HAUTEUR;
+            triProjected.p[2].y *= 0.5f * (float)ECRAN_HAUTEUR;
             
             Ltri.push_back(triProjected);
         }
-        
     }
 
     sort(Ltri.begin(), Ltri.end(), [](triangle &t1, triangle &t2){
-        float z1 = (t1.p[0].y + t1.p[1].y + t1.p[2].y) / 3.0f;
-        float z2 = (t2.p[0].y + t2.p[1].y + t2.p[2].y) / 3.0f;
+        float z1 = (t1.p[0].z + t1.p[1].z + t1.p[2].z) / 3.0f;
+        float z2 = (t2.p[0].z + t2.p[1].z + t2.p[2].z) / 3.0f;
         return z1 > z2;
     });
 
     //Affichage
     for(auto &tri: Ltri){
         // face
-        //Uint8 gradient = (Uint8) std::round(dp*230);
-        SDL_Color color = { 255, 255, 0, 255 };
+        Uint8 gradient = (Uint8) std::round(tri.dp*255);
+        SDL_Color color = { gradient, 0, 0, 255 };
         
         std::vector<SDL_Vertex> verts = {
-            { SDL_FPoint{ tri.p[0].x, tri.p[0].z }, color },
-            { SDL_FPoint{ tri.p[1].x, tri.p[1].z }, color },
-            { SDL_FPoint{ tri.p[2].x, tri.p[2].z }, color }
+            { SDL_FPoint{ tri.p[0].x, tri.p[0].y }, color },
+            { SDL_FPoint{ tri.p[1].x, tri.p[1].y }, color },
+            { SDL_FPoint{ tri.p[2].x, tri.p[2].y }, color }
         };
         SDL_RenderGeometry( renderer, nullptr, verts.data(), verts.size(), nullptr, 0);
         // outline
-        SDL_RenderDrawLine(renderer, tri.p[0].x, tri.p[0].z,
-        tri.p[1].x, tri.p[1].z);
-        SDL_RenderDrawLine(renderer, tri.p[1].x, tri.p[1].z,
-        tri.p[2].x, tri.p[2].z);
-        SDL_RenderDrawLine(renderer, tri.p[2].x, tri.p[2].z,
-        tri.p[0].x, tri.p[0].z);
+        SDL_RenderDrawLine(renderer, tri.p[0].x, tri.p[0].y,
+        tri.p[1].x, tri.p[1].y);
+        SDL_RenderDrawLine(renderer, tri.p[1].x, tri.p[1].y,
+        tri.p[2].x, tri.p[2].y);
+        SDL_RenderDrawLine(renderer, tri.p[2].x, tri.p[2].y,
+        tri.p[0].x, tri.p[0].y);
     }
     n+= 0.05f;
     // render window
@@ -175,17 +177,4 @@ bool Affichage::initialiser(){
 
 void Affichage::setJoueur(Joueur* j){
     joueur = j;
-}
-
-void Affichage::MultiplyMatrixVector(vec3d &i, vec3d &o, mat4x4 &m){
-    o.x = i.x * m.m[0][0] + i.y * m.m[1][0] + i.z * m.m[2][0] + m.m[3][0];
-    o.y = i.x * m.m[0][1] + i.y * m.m[1][1] + i.z * m.m[2][1] + m.m[3][1];
-    o.z = i.x * m.m[0][2] + i.y * m.m[1][2] + i.z * m.m[2][2] + m.m[3][2];
-    float w = i.x * m.m[0][3] + i.y * m.m[1][3] + i.z * m.m[2][3] + m.m[3][3];
-
-    if (w != 0.0f){
-        o.x /= w;
-        o.y /= w;
-        o.z /= w;
-    }
 }
