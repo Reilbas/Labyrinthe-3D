@@ -7,17 +7,17 @@
 #include "ReaderWriter.h"
 
 class Jeu {
-
     // Attributs
     public:
         static const int FRAMERATE = 60;
 
     private:
         static Jeu* instance;
-        bool quitter;
+        bool quitter, mouseLock;
         Affichage* affichage;
         Horloge* horloge;
         SDL_Event evenements;
+        float lastMx;
 
     // Constructeur et Méthodes
     public:

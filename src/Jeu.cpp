@@ -16,6 +16,8 @@ void Jeu::detruire(){
 
 Jeu::Jeu(){
     quitter = false;
+    mouseLock = false;
+    lastMx = evenements.motion.x; // position de la souris au lancement de la fenetre
     affichage = Affichage::getInstance();
     if(!Affichage::initialiser()){
         quitter = true;
@@ -55,46 +57,62 @@ void Jeu::run(){
                     switch (evenements.key.keysym.sym){
                         // deplacement horizontal
                         case SDLK_q:
-                            joueur->posX -= 0.5f;
-                            std::cout << "X:" << joueur->posX << " Y:" << joueur->posY << " Z:" << joueur->posZ << "\n";
+                            joueur->gauche();
+                            //joueur->print();
                             break;
                         case SDLK_d:
-                            joueur->posX += 0.5f;
-                            std::cout << "X:" << joueur->posX << " Y:" << joueur->posY << " Z:" << joueur->posZ << "\n";
+                            joueur->droite();
+                            //joueur->print();
                             break;
                         case SDLK_z:
-                            joueur->posY += 0.5f;
-                            std::cout << "X:" << joueur->posX << " Y:" << joueur->posY << " Z:" << joueur->posZ << "\n";
+                            joueur->avancer();
+                            //joueur->print();
                             break;
                         case SDLK_s:
-                            joueur->posY -= 0.5f;
-                            std::cout << "X:" << joueur->posX << " Y:" << joueur->posY << " Z:" << joueur->posZ << "\n";
+                            joueur->reculer();
+                            //joueur->print();
                             break;
 
+                        case SDLK_w:
+                            if(mouseLock == true){
+                                SDL_SetRelativeMouseMode(SDL_FALSE);
+                                mouseLock = false;
+                            }else{
+                                SDL_SetRelativeMouseMode(SDL_TRUE);
+                                mouseLock = true;
+                            }
+                            break;
+                            
+
                         // deplacement vertical
-                        /*
-                        case SDLK_z:
-                            joueur->posY += 1.0f;
-                            std::cout << "X:" << joueur->posX << " Y:" << joueur->posY << " Z:" << joueur->posZ << "\n";
+                        case SDLK_SPACE:
+                            joueur->vCam.y -= 0.5f;
+                            joueur->maj();
+                            joueur->print();
                             break;
-                        case SDLK_s:
-                            joueur->posY -= 1.0f;
-                            std::cout << "X:" << joueur->posX << " Y:" << joueur->posY << " Z:" << joueur->posZ << "\n";
+                        case SDLK_LCTRL:
+                            joueur->vCam.y += 0.5f;
+                            joueur->maj();
+                            joueur->print();
                             break;
-                        */
-                        // deplacement orientation
+
                         case SDLK_a:
                             joueur->rotY += 0.5f;
-                            std::cout << "rotY:" << joueur->rotY << "\n";
+                            joueur->maj();
+                            joueur->print();
                             break;
                         case SDLK_e:
                             joueur->rotY -= 0.5f;
-                            std::cout << "rotY:" << joueur->rotY << "\n";
+                            joueur->maj();
+                            joueur->print();
                             break;
                     }
                     break;
                 case SDL_MOUSEMOTION:
-                    //std::cout << "X:" << evenements.motion.x << " Y:" << evenements.motion.y << "\n"; 
+                    joueur->rotY += ((lastMx - evenements.motion.x)/150);
+                    joueur->maj();
+                    lastMx = evenements.motion.x;
+                    std::cout << "X:" << evenements.motion.x << " Y:" << evenements.motion.y << "\n"; 
                     break;
                 }
             }
