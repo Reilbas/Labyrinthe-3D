@@ -11,9 +11,12 @@ class Joueur {
         int pv; // point de vie
         vec3d vCam;
         float rotY;
+        
+        const float maxSpeed = 4.0f;
+        float speed = 0.0f;
 
-        vec3d vUp = {0.0f,1.0f,0.0f};//---
-        vec3d vTarget = {0.0f,0.0f,1.0f};//---
+        vec3d vUp = {0.0f,1.0f,0.0f};
+        vec3d vTarget = {0.0f,0.0f,1.0f};
 
         mat4x4 matCamRot;
         vec3d vlookDir, vForward, vRight;
@@ -28,6 +31,7 @@ class Joueur {
         void reculer();
         void droite();
         void gauche();
+        void rotationY(float a);
         void setPos(float nX, float nY, float nZ);
         void print();
 };

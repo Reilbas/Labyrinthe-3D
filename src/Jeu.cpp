@@ -82,8 +82,6 @@ void Jeu::run(){
                                 mouseLock = true;
                             }
                             break;
-                            
-
                         // deplacement vertical
                         case SDLK_SPACE:
                             joueur->vCam.y -= 0.5f;
@@ -97,22 +95,26 @@ void Jeu::run(){
                             break;
 
                         case SDLK_a:
-                            joueur->rotY += 0.5f;
-                            joueur->maj();
-                            joueur->print();
+                            joueur->rotationY(0.5f);
                             break;
                         case SDLK_e:
-                            joueur->rotY -= 0.5f;
-                            joueur->maj();
-                            joueur->print();
+                            joueur->rotationY(-0.5f);
                             break;
                     }
                     break;
                 case SDL_MOUSEMOTION:
-                    joueur->rotY += ((lastMx - evenements.motion.x)/150);
-                    joueur->maj();
-                    lastMx = evenements.motion.x;
-                    std::cout << "X:" << evenements.motion.x << " Y:" << evenements.motion.y << "\n"; 
+                    if (mouseLock){
+                        if(evenements.motion.x >= affichage->ECRAN_LARGEUR - 1){
+                            SDL_WarpMouseInWindow(affichage->getFenetre(), 1, evenements.motion.y);
+                            lastMx = evenements.motion.x;
+                        }
+                        if(evenements.motion.x <= 0){
+                            SDL_WarpMouseInWindow(affichage->getFenetre(), affichage->ECRAN_LARGEUR - 2, evenements.motion.y);
+                            lastMx = evenements.motion.x;
+                        }
+                        joueur->rotationY((lastMx - evenements.motion.x)/150);
+                        lastMx = evenements.motion.x;
+                    }
                     break;
                 }
             }
@@ -122,6 +124,9 @@ void Jeu::run(){
             */
             // Affichage
             if(horloge->getDelta() >= (1.0f / FRAMERATE)){
+                if(joueur->speed > 1){
+                    joueur->speed -= 0.01f;
+                }
                 affichage->afficher();
                 horloge->reset();
             }

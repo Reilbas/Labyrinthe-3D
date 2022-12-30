@@ -1,5 +1,5 @@
 #include "Joueur.h"
-#define speed 2.0f
+//#define speed 2.0f
 
 Joueur::Joueur(){
     vCam = {0.0f, 0.0f, 0.0f};
@@ -20,35 +20,52 @@ void Joueur::setPos(float nX, float nY, float nZ){
 }
 
 void Joueur::maj(){
-    vUp = {0.0f,1.0f,0.0f};//---
-    vTarget = {0.0f,0.0f,1.0f};//---
+    vUp = {0.0f,1.0f,0.0f};
+    vTarget = {0.0f,0.0f,1.0f};
 
-    matCamRot = AllMath::rotMatY(rotY); //---
+    matCamRot = AllMath::rotMatY(rotY);
 
-    vlookDir =  AllMath::matrixMultVector(matCamRot, vTarget);//---
-    vTarget = AllMath::addVector(vCam, vlookDir);//---
+    vlookDir =  AllMath::matrixMultVector(matCamRot, vTarget);
+    vTarget = AllMath::addVector(vCam, vlookDir);
 
-    vForward = AllMath::mulVector(vlookDir, speed);//---
+    vForward = AllMath::mulVector(vlookDir, speed);
     vRight = {vForward.z, 0, -vForward.x};
 }
 
 void Joueur::avancer(){
-    vCam = AllMath::addVector(vCam, vForward);//---
+    vCam = AllMath::addVector(vCam, vForward);
+    if(speed < maxSpeed){
+        speed += 0.03f;
+    }
     this->maj();
 }
 
 void Joueur::reculer(){
-    vCam = AllMath::subVector(vCam, vForward);//---
+    vCam = AllMath::subVector(vCam, vForward);
+        if(speed < maxSpeed){
+        speed += 0.03f;
+    }
     this->maj();
 }
 
 void Joueur::droite(){
-    vCam = AllMath::addVector(vCam, vRight);//---
+    vCam = AllMath::addVector(vCam, vRight);
+        if(speed < maxSpeed){
+        speed += 0.03f;
+    }
     this->maj();
 }
 
 void Joueur::gauche(){
-    vCam = AllMath::subVector(vCam, vRight);//---
+    vCam = AllMath::subVector(vCam, vRight);
+    if(speed < maxSpeed){
+        speed += 0.03f;
+    }
+    this->maj();
+}
+
+void Joueur::rotationY(float a){
+    rotY += a;
     this->maj();
 }
 
