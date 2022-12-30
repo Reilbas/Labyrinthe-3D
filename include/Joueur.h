@@ -2,6 +2,7 @@
 #define JOUEUR
 
 #include <iostream>
+#include <math.h>
 #include "MeshMaker.h"
 #include "AllMath.h"
 
@@ -25,12 +26,11 @@ class Joueur {
     public:
         Joueur();
         Joueur(float x, float y, float z);
-        ~Joueur();
         void maj();
-        void avancer();
-        void reculer();
-        void droite();
-        void gauche();
+        void avancer(bool** env, int L, int l);
+        void reculer(bool** env, int L, int l);
+        void droite(bool** env, int L, int l);
+        void gauche(bool** env, int L, int l);
         void rotationY(float a);
         void setPos(float nX, float nY, float nZ);
         void print();

@@ -4,6 +4,7 @@
 #include <vector>
 #include <math.h>
 #include "Joueur.h"
+#include "Environement.h"
 #include "Element.h"
 #include "MeshMaker.h"
 #include "AllMath.h"
@@ -20,11 +21,13 @@ class Affichage {
         SDL_Window* fenetre;
         SDL_Renderer * renderer;
         Joueur* joueur;
+        Environement* environement;
+
 
         std::vector<Element> renderList;
         mat4x4 matriceProj;
 
-        vec3d lumiere = {0.0f,-1.0f,0.0f};
+        vec3d lumiere = {-0.5f,-1.0f,-0.5f};
 
         float n = 0;
 
@@ -34,6 +37,7 @@ class Affichage {
         static bool initialiser();
         static void detruire();
         void setJoueur(Joueur* j);
+        void setEnv(Environement* env);
         void afficher();
         SDL_Window* getFenetre();
         void drawRect(float x, float y, float l, float h, SDL_Color &color);

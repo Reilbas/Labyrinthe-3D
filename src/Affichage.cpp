@@ -59,7 +59,7 @@ void Affichage::afficher(){
     SDL_RenderClear(renderer);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-    mesh cube = MeshMaker::fromObj("cube.obj",0.0f, 0.0f, 0.0f, 1.0f);
+    //mesh cube = MeshMaker::fromObj("cube.obj",0.0f, 0.0f, 0.0f, 1.0f);
 
     //mat4x4 matRotX = AllMath::rotMatX(n/4);
     //mat4x4 matRotZ = AllMath::rotMatZ(n/2);
@@ -68,65 +68,75 @@ void Affichage::afficher(){
     //matW = AllMath::matXmat(matRotZ, matRotX);
     //matW = AllMath::matXmat(matW, matTrans);
 
-    mat4x4 matCam = AllMath::matPointAt(joueur->vCam, joueur->vTarget, joueur->vUp); // -- edit
+    mat4x4 matCam = AllMath::matPointAt(joueur->vCam, joueur->vTarget, joueur->vUp);
     mat4x4 matView = AllMath::matrixQuickInverse(matCam);
 
     std::vector<triangle> Ltri;
-    for(auto tri : cube.tris) {
-        triangle triProjected, triTransfo, triView;
 
-        triTransfo.p[0] = AllMath::matrixMultVector(matW, tri.p[0]);
-        triTransfo.p[1] = AllMath::matrixMultVector(matW, tri.p[1]);
-        triTransfo.p[2] = AllMath::matrixMultVector(matW, tri.p[2]);
+    for(int i = 0 ; i < environement->getLongueur() ; i++){
+        for(int j = 0 ; j < environement->getLargeur() ; j++){
+            if(environement->getMurs()[i][j]){
+                //mesh cube = MeshMaker::fromObj("cubeR.obj", (float) i*2, 0.0f, (float) j*2, 1.0f);
+                mesh cube = MeshMaker::Cube((float) i, 0.0f, (float) j, 1.0f);
+                for(auto tri : cube.tris) {
+                    triangle triProjected, triTransfo, triView;
 
-        vec3d normal, l1, l2;
+                    triTransfo.p[0] = AllMath::matrixMultVector(matW, tri.p[0]);
+                    triTransfo.p[1] = AllMath::matrixMultVector(matW, tri.p[1]);
+                    triTransfo.p[2] = AllMath::matrixMultVector(matW, tri.p[2]);
 
-        l1 = AllMath::subVector(triTransfo.p[1], triTransfo.p[0]);
-        l2 = AllMath::subVector(triTransfo.p[2], triTransfo.p[0]);
+                    vec3d normal, l1, l2;
 
-        normal = AllMath::crossProd(l1, l2);
-        normal = AllMath::norm(normal);
+                    l1 = AllMath::subVector(triTransfo.p[1], triTransfo.p[0]);
+                    l2 = AllMath::subVector(triTransfo.p[2], triTransfo.p[0]);
 
-        vec3d vCamRay = AllMath::subVector(triTransfo.p[0], joueur->vCam);
+                    normal = AllMath::crossProd(l1, l2);
+                    normal = AllMath::norm(normal);
 
-        if(AllMath::dotProd(normal, vCamRay) < 0.0f ) {
-            vec3d li = AllMath::norm(lumiere);
-            triProjected.dp = std::max(0.1f, AllMath::dotProd(li, normal));
+                    vec3d vCamRay = AllMath::subVector(triTransfo.p[0], joueur->vCam);
 
-            triView.p[0] = AllMath::matrixMultVector(matView, triTransfo.p[0]);
-            triView.p[1] = AllMath::matrixMultVector(matView, triTransfo.p[1]);
-            triView.p[2] = AllMath::matrixMultVector(matView, triTransfo.p[2]);
+                    if(AllMath::dotProd(normal, vCamRay) < 0.0f ) {
+                        vec3d li = AllMath::norm(lumiere);
+                        triProjected.dp = std::max(0.1f, AllMath::dotProd(li, normal));
 
-            // cliping
-            int nClippedTriangle = 0;
-            triangle clipped[2];
-            nClippedTriangle = AllMath::triangleClipAgainstPlane({0.0f,0.0f,0.1f}, {0.0f,0.0f,1.0f}, triView, clipped[0], clipped[1]);
+                        triView.p[0] = AllMath::matrixMultVector(matView, triTransfo.p[0]);
+                        triView.p[1] = AllMath::matrixMultVector(matView, triTransfo.p[1]);
+                        triView.p[2] = AllMath::matrixMultVector(matView, triTransfo.p[2]);
 
-            for(int i = 0 ; i < nClippedTriangle ; i++){
-                // 3D -> 2D
-                triProjected.p[0] = AllMath::matrixMultVector(matriceProj, clipped[i].p[0]);
-                triProjected.p[1] = AllMath::matrixMultVector(matriceProj, clipped[i].p[1]);
-                triProjected.p[2] = AllMath::matrixMultVector(matriceProj, clipped[i].p[2]);
+                        // cliping
+                        int nClippedTriangle = 0;
+                        triangle clipped[2];
+                        nClippedTriangle = AllMath::triangleClipAgainstPlane({0.0f,0.0f,0.1f}, {0.0f,0.0f,1.0f}, triView, clipped[0], clipped[1]);
 
-                triProjected.p[0] = AllMath::divVector(triProjected.p[0], triProjected.p[0].w);
-                triProjected.p[1] = AllMath::divVector(triProjected.p[1], triProjected.p[1].w);
-                triProjected.p[2] = AllMath::divVector(triProjected.p[2], triProjected.p[2].w);
+                        for(int i = 0 ; i < nClippedTriangle ; i++){
+                            // 3D -> 2D
+                            triProjected.p[0] = AllMath::matrixMultVector(matriceProj, clipped[i].p[0]);
+                            triProjected.p[1] = AllMath::matrixMultVector(matriceProj, clipped[i].p[1]);
+                            triProjected.p[2] = AllMath::matrixMultVector(matriceProj, clipped[i].p[2]);
 
-                vec3d offset = {1, 1, 0};
-                triProjected.p[0] = AllMath::addVector(triProjected.p[0], offset);
-                triProjected.p[1] = AllMath::addVector(triProjected.p[1], offset);
-                triProjected.p[2] = AllMath::addVector(triProjected.p[2], offset);
-                triProjected.p[0].x *= 0.5f * (float)ECRAN_LARGEUR;
-                triProjected.p[0].y *= 0.5f * (float)ECRAN_HAUTEUR;
-                triProjected.p[1].x *= 0.5f * (float)ECRAN_LARGEUR;
-                triProjected.p[1].y *= 0.5f * (float)ECRAN_HAUTEUR;
-                triProjected.p[2].x *= 0.5f * (float)ECRAN_LARGEUR;
-                triProjected.p[2].y *= 0.5f * (float)ECRAN_HAUTEUR;
-                
-                Ltri.push_back(triProjected);
+                            triProjected.p[0] = AllMath::divVector(triProjected.p[0], triProjected.p[0].w);
+                            triProjected.p[1] = AllMath::divVector(triProjected.p[1], triProjected.p[1].w);
+                            triProjected.p[2] = AllMath::divVector(triProjected.p[2], triProjected.p[2].w);
+
+                            vec3d offset = {1, 1, 0};
+                            triProjected.p[0] = AllMath::addVector(triProjected.p[0], offset);
+                            triProjected.p[1] = AllMath::addVector(triProjected.p[1], offset);
+                            triProjected.p[2] = AllMath::addVector(triProjected.p[2], offset);
+                            triProjected.p[0].x *= 0.5f * (float)ECRAN_LARGEUR;
+                            triProjected.p[0].y *= 0.5f * (float)ECRAN_HAUTEUR;
+                            triProjected.p[1].x *= 0.5f * (float)ECRAN_LARGEUR;
+                            triProjected.p[1].y *= 0.5f * (float)ECRAN_HAUTEUR;
+                            triProjected.p[2].x *= 0.5f * (float)ECRAN_LARGEUR;
+                            triProjected.p[2].y *= 0.5f * (float)ECRAN_HAUTEUR;
+                            
+                            Ltri.push_back(triProjected);
+                        }
+                    }
+                }
             }
         }
     }
+
 
     sort(Ltri.begin(), Ltri.end(), [](triangle &t1, triangle &t2){
         float z1 = (t1.p[0].z + t1.p[1].z + t1.p[2].z) / 3.0f;
@@ -154,7 +164,7 @@ void Affichage::afficher(){
         tri.p[2].x, tri.p[2].y);
         SDL_RenderDrawLine(renderer, tri.p[2].x, tri.p[2].y,
         tri.p[0].x, tri.p[0].y);
-        */
+        /**/
     }
     n+= 0.05f;
 
@@ -185,6 +195,10 @@ bool Affichage::initialiser(){
 
 void Affichage::setJoueur(Joueur* j){
     joueur = j;
+}
+
+void Affichage::setEnv(Environement* env){
+    environement = env;
 }
 
 SDL_Window* Affichage::getFenetre(){

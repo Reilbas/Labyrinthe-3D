@@ -40,9 +40,8 @@ void Jeu::run(){
         Joueur* joueur = new Joueur();
         Environement* env = new Environement(joueur, data, L, l);
 
-        joueur->setPos(0.0f,0.0f,-1.0f);
-
         affichage->setJoueur(joueur);
+        affichage->setEnv(env);
         free(data);
         while(!quitter){
             // Mise à jour de l'horloge
@@ -57,19 +56,19 @@ void Jeu::run(){
                     switch (evenements.key.keysym.sym){
                         // deplacement horizontal
                         case SDLK_q:
-                            joueur->gauche();
+                            joueur->gauche(env->getMurs(), env->getLongueur(), env->getLargeur());
                             //joueur->print();
                             break;
                         case SDLK_d:
-                            joueur->droite();
+                            joueur->droite(env->getMurs(), env->getLongueur(), env->getLargeur());
                             //joueur->print();
                             break;
                         case SDLK_z:
-                            joueur->avancer();
+                            joueur->avancer(env->getMurs(), env->getLongueur(), env->getLargeur());
                             //joueur->print();
                             break;
                         case SDLK_s:
-                            joueur->reculer();
+                            joueur->reculer(env->getMurs(), env->getLongueur(), env->getLargeur());
                             //joueur->print();
                             break;
 
@@ -124,9 +123,6 @@ void Jeu::run(){
             */
             // Affichage
             if(horloge->getDelta() >= (1.0f / FRAMERATE)){
-                if(joueur->speed > 1){
-                    joueur->speed -= 0.01f;
-                }
                 affichage->afficher();
                 horloge->reset();
             }

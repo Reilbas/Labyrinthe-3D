@@ -1,5 +1,5 @@
 #include "Joueur.h"
-//#define speed 2.0f
+#define speed 0.5f
 
 Joueur::Joueur(){
     vCam = {0.0f, 0.0f, 0.0f};
@@ -32,34 +32,42 @@ void Joueur::maj(){
     vRight = {vForward.z, 0, -vForward.x};
 }
 
-void Joueur::avancer(){
-    vCam = AllMath::addVector(vCam, vForward);
-    if(speed < maxSpeed){
-        speed += 0.03f;
+void Joueur::avancer(bool** env, int L, int l){
+    vec3d proj = AllMath::addVector(vCam, vForward);
+    if((proj.x >= 0) && (proj.x < L+1) && (proj.z >= 0) && (proj.z < l+1)){
+        if(!env[(int)std::floor(proj.x)][(int)std::floor(proj.z)]){
+            vCam = proj;
+        }
     }
     this->maj();
 }
 
-void Joueur::reculer(){
-    vCam = AllMath::subVector(vCam, vForward);
-        if(speed < maxSpeed){
-        speed += 0.03f;
+void Joueur::reculer(bool** env, int L, int l){
+    vec3d proj = AllMath::subVector(vCam, vForward);
+    if((proj.x >= 0) && (proj.x < L+1) && (proj.z >= 0) && (proj.z < l+1)){
+        if(!env[(int)std::floor(proj.x)][(int)std::floor(proj.z)]){
+            vCam = proj;
+        }
     }
     this->maj();
 }
 
-void Joueur::droite(){
-    vCam = AllMath::addVector(vCam, vRight);
-        if(speed < maxSpeed){
-        speed += 0.03f;
+void Joueur::droite(bool** env, int L, int l){
+    vec3d proj = AllMath::addVector(vCam, vRight);
+    if((proj.x >= 0) && (proj.x < L+1) && (proj.z >= 0) && (proj.z < l+1)){
+        if(!env[(int)std::floor(proj.x)][(int)std::floor(proj.z)]){
+            vCam = proj;
+        }
     }
     this->maj();
 }
 
-void Joueur::gauche(){
-    vCam = AllMath::subVector(vCam, vRight);
-    if(speed < maxSpeed){
-        speed += 0.03f;
+void Joueur::gauche(bool** env, int L, int l){
+    vec3d proj = AllMath::subVector(vCam, vRight);
+    if((proj.x >= 0) && (proj.x < L+1) && (proj.z >= 0) && (proj.z < l+1)){
+        if(!env[(int)std::floor(proj.x)][(int)std::floor(proj.z)]){
+            vCam = proj;
+        }
     }
     this->maj();
 }
@@ -71,8 +79,4 @@ void Joueur::rotationY(float a){
 
 void Joueur::print(){
     std::cout << "X:" << vCam.x << " Y:" << vCam.y << " Z:" << vCam.z << " Ry:" << rotY << std::endl;
-}
-
-Joueur::~Joueur(){
-    //delete la cam
 }

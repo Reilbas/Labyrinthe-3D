@@ -1,31 +1,31 @@
 #include "MeshMaker.h"
 
-mesh MeshMaker::Cube(float x, float y, float z){
+mesh MeshMaker::Cube(float x, float y, float z, float size){
     mesh m;
     m.tris = {
-    	// SOUTH
-		{ x, y, z,                  x, y, (z+1.0f),                 (x+1.0f), y, (z+1.0f)           },
-		{ x, y, z,                  (x+1.0f), y, (z+1.0f),          (x+1.0f), y, z                  },
+    	// Sud
+		{ x, y, z, 1,                 x, (y + size), z,1,                (x + size), (y + size), z,1           },
+		{ x, y, z, 1,                 (x + size), (y + size), z,1,          (x + size), y, z,1                  },
 
-		// EAST                                                      
-		{ (x+1.0f), y, z,           (x+1.0f), y, (z+1.0f),          (x+1.0f), (y+1.0f), (z+1.0f)    },
-		{ (x+1.0f), y, z,           (x+1.0f), (y+1.0f), (z+1.0f),   (x+1.0f), (y+1.0f), z           },
+		// Est                                                      
+		{ (x + size), y, z,1,           (x + size), (y + size), z,1,          (x + size), (y + size), (z + size),1    },
+		{ (x + size), y, z,1,           (x + size), (y + size), (z + size),1,   (x + size), y, (z + size),1           },
 
-		// NORTH                                                     
-		{ (x+1.0f), (y+1.0f), z,    (x+1.0f), (y+1.0f), (z+1.0f),   x, (y+1.0f), (z+1.0f)           },
-		{ (x+1.0f), (y+1.0f), z,    x, (y+1.0f), (z+1.0f),          x, (y+1.0f), z                  },
+		// Nord                                                     
+		{ (x + size), y, (z + size),1,    (x + size), (y + size), (z + size),1,   x, (y + size), (z + size),1           },
+		{ (x + size), y, (z + size),1,    x, (y + size), (z + size),1,          x, y, (z + size),1                  },
 
-		// WEST                                                      
-		{ x, (y+1.0f), z,           x, (y+1.0f), (z+1.0f),          x, y, (z+1.0f)                  },
-		{ x, (y+1.0f), z,           x, y, (z+1.0f),                 x, y, z                         },
+		// Ouest                                                      
+		{ x, y, (z + size),1,           x, (y + size), (z + size),1,          x, (y + size), z,1,                  },
+		{ x, y, (z + size),1,           x, (y + size), z,1,                 x, y, z,1,                         },
 
-		// TOP                                                       
-		{ x, y, (z+1.0f),           x, (y+1.0f), (z+1.0f),          (x+1.0f), (y+1.0f), (z+1.0f)    },
-		{ x, y, (z+1.0f),           (x+1.0f), (y+1.0f), (z+1.0f),   (x+1.0f), y, (z+1.0f)           },
+		// Haut                                                       
+		{ x, (y + size), z,1,           x, (y + size), (z + size),1,          (x + size), (y + size), (z + size),1    },
+		{ x, (y + size), z,1,           (x + size), (y + size), (z + size),1,   (x + size), (y + size), z,1           },
 
-		// BOTTOM                                                    
-		{ (x+1.0f), (y+1.0f), z,    x, (y+1.0f), z,                 x, y, z                         },
-		{ (x+1.0f), (y+1.0f), z,    x, y, z,                        (x+1.0f), y, z                  },
+		// Bas                                                    
+		{ (x + size), y, (z + size),1,    x, y, (z + size),1,                 x, y, z,1                         },
+		{ (x + size), y, (z + size),1,    x, y, z,1,                        (x + size), y, z,1                  },
     };
     return m;
 }

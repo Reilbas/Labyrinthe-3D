@@ -4,6 +4,7 @@ Environement::Environement(Joueur* joueur){
     // Environnement par défaut sans enemies
     L = 5;
     l = 5;
+    objets = new std::vector<Element>;
     murs = (bool**) malloc(L * sizeof(bool*));
     for (int i = 0 ; i < L ; i++){
         murs[i] = (bool*) malloc(l * sizeof(bool));
@@ -22,7 +23,7 @@ Environement::Environement(Joueur* joueur){
             murs[i][j] = m[i][j];
         }
     }
-    joueur->setPos(2.5f, 0.5f, 2.5f);
+    joueur->setPos(2.5f, -1.0f, 2.5f);
 }
 
 Environement::Environement(Joueur* joueur, char** env, int Long, int larg){
@@ -50,16 +51,19 @@ Environement::Environement(Joueur* joueur, char** env, int Long, int larg){
             case 'I':
             case 'i':
                 // placement des objets
-                objets.push_back({(i+0.5f), 0.0f, (j+0.5f), MeshMaker::Cube((i+0.5f), 0.0f, (j+0.5f))}); // changer le mesh
+                objets->push_back({(i+0.5f), 0.0f, (j+0.5f), MeshMaker::Cube((i+0.5f), 0.0f, (j+0.5f), 0.5f)}); // changer le mesh
+                murs[i][j] = false;
                 break;
             case 'P':
             case 'p':
                 // placement du joueur
-                joueur->setPos((i+0.5f), 0.0f, (j+0.5f));
+                joueur->setPos((i+0.5f), -1.5f, (j+0.5f));
+                murs[i][j] = false;
                 break;
             case 'E':
             case 'e':
                 // placement d'ennemis
+                murs[i][j] = false;
                 break;
             default:
                 std::cout << "Charactère non reconnus";
@@ -74,18 +78,30 @@ Environement::~Environement(){
         free(murs[i]);
     }
     free(murs);
+    delete objets;
 }
 
-std::vector<Element> Environement::getObjets(){
+std::vector<Element>* Environement::getObjets(){
     return objets;
 }
 
+bool** Environement::getMurs(){
+    return murs;
+}
+
+int Environement::getLongueur(){
+    return L;
+}
+int Environement::getLargeur(){
+    return l;
+}
+
 void Environement::addObj(Element e){
-    objets.push_back(e);
+    objets->push_back(e);
 }
 
 void Environement::print(){
-    for(Element& e : objets){
+    for(Element& e : *objets){
       std::cout << e.getX() << " " << e.getY() << " " << e.getZ() << " " << std::endl;
     }
 }

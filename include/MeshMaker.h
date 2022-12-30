@@ -26,7 +26,7 @@ struct mesh {
 class MeshMaker {
     // Constructeur et Méthodes
     public:
-        static mesh Cube(float x, float y, float z);
+        static mesh Cube(float x, float y, float z, float size);
         static mesh fromObj(std::string nomfic,float x, float y, float z, float size);
 };
 
