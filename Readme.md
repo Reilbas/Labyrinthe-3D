@@ -7,10 +7,10 @@ Implemented features:
 - Management of keyboard events
 - Proper Maze reader
 - Integration of a 3D view
+- Management of mouse events
+- Collectibles in maze
 
 Incomming features:
-- Management of mouse events
-- Collectibles and Enemies in maze
 - Maze maker or Saving your progress
 - Main menu with options
 
