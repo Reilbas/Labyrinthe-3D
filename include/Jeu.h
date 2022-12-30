@@ -24,6 +24,7 @@ class Jeu {
         static Jeu* getInstance();
         static void detruire();
         void run();
+        void checkItems(Joueur* j, Environement* env);
 
     private:
         Jeu();

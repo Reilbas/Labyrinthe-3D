@@ -4,7 +4,6 @@ Environement::Environement(Joueur* joueur){
     // Environnement par défaut sans enemies
     L = 5;
     l = 5;
-    objets = new std::vector<Element>;
     murs = (bool**) malloc(L * sizeof(bool*));
     for (int i = 0 ; i < L ; i++){
         murs[i] = (bool*) malloc(l * sizeof(bool));
@@ -51,7 +50,7 @@ Environement::Environement(Joueur* joueur, char** env, int Long, int larg){
             case 'I':
             case 'i':
                 // placement des objets
-                objets->push_back({(i+0.5f), 0.0f, (j+0.5f), MeshMaker::Cube((i+0.5f), 0.0f, (j+0.5f), 0.5f)}); // changer le mesh
+                objets.push_back(  {(i+0.5f), 0.0f, (j+0.5f), MeshMaker::fromObj("icosphere.obj", (i+0.5f), 0.0f, (j+0.5f), 0.5f)}  ); // TODO changer le mesh
                 murs[i][j] = false;
                 break;
             case 'P':
@@ -78,10 +77,9 @@ Environement::~Environement(){
         free(murs[i]);
     }
     free(murs);
-    delete objets;
 }
 
-std::vector<Element>* Environement::getObjets(){
+std::vector<Element> Environement::getObjets(){
     return objets;
 }
 
@@ -96,12 +94,12 @@ int Environement::getLargeur(){
     return l;
 }
 
-void Environement::addObj(Element e){
-    objets->push_back(e);
+void Environement::removeObj(int e){
+    objets.erase(objets.begin() + e);
 }
 
 void Environement::print(){
-    for(Element& e : *objets){
+    for(Element& e : objets){
       std::cout << e.getX() << " " << e.getY() << " " << e.getZ() << " " << std::endl;
     }
 }

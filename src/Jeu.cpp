@@ -39,10 +39,11 @@ void Jeu::run(){
     if(data != nullptr){
         Joueur* joueur = new Joueur();
         Environement* env = new Environement(joueur, data, L, l);
+        free(data);
 
         affichage->setJoueur(joueur);
         affichage->setEnv(env);
-        free(data);
+
         while(!quitter){
             // Mise à jour de l'horloge
             horloge->update();
@@ -57,19 +58,19 @@ void Jeu::run(){
                         // deplacement horizontal
                         case SDLK_q:
                             joueur->gauche(env->getMurs(), env->getLongueur(), env->getLargeur());
-                            //joueur->print();
+                            this->checkItems(joueur, env);
                             break;
                         case SDLK_d:
                             joueur->droite(env->getMurs(), env->getLongueur(), env->getLargeur());
-                            //joueur->print();
+                            this->checkItems(joueur, env);
                             break;
                         case SDLK_z:
                             joueur->avancer(env->getMurs(), env->getLongueur(), env->getLargeur());
-                            //joueur->print();
+                            this->checkItems(joueur, env);
                             break;
                         case SDLK_s:
                             joueur->reculer(env->getMurs(), env->getLongueur(), env->getLargeur());
-                            //joueur->print();
+                            this->checkItems(joueur, env);
                             break;
 
                         case SDLK_w:
@@ -81,7 +82,14 @@ void Jeu::run(){
                                 mouseLock = true;
                             }
                             break;
+                        case SDLK_a:
+                            joueur->rotationY(0.5f);
+                            break;
+                        case SDLK_e:
+                            joueur->rotationY(-0.5f);
+                            break;
                         // deplacement vertical
+                        /*  
                         case SDLK_SPACE:
                             joueur->vCam.y -= 0.5f;
                             joueur->maj();
@@ -92,13 +100,7 @@ void Jeu::run(){
                             joueur->maj();
                             joueur->print();
                             break;
-
-                        case SDLK_a:
-                            joueur->rotationY(0.5f);
-                            break;
-                        case SDLK_e:
-                            joueur->rotationY(-0.5f);
-                            break;
+                        */
                     }
                     break;
                 case SDL_MOUSEMOTION:
@@ -117,10 +119,6 @@ void Jeu::run(){
                     break;
                 }
             }
-            // Mise a jour des valeurs (interne)
-            /*
-                Gestion des donnéees
-            */
             // Affichage
             if(horloge->getDelta() >= (1.0f / FRAMERATE)){
                 affichage->afficher();
@@ -133,5 +131,14 @@ void Jeu::run(){
     else{
         free(data);
         std::cout << "Le premier niveau n'a pas pu etre charger\n";
+    }
+}
+
+void Jeu::checkItems(Joueur* j, Environement* env){
+    std::vector<Element> obj = env->getObjets();
+    for(int i = 0 ; i < obj.size() ; i++){
+        if((std::floor(obj[i].posX) == std::floor(j->vCam.x)) && (std::floor(obj[i].posZ) == std::floor(j->vCam.z))){
+            env->removeObj(i);
+        }
     }
 }
