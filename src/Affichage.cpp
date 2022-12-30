@@ -165,6 +165,8 @@ void Affichage::afficher(){
         */
     }
     n+= 0.05f;
+
+
     // render window
     SDL_RenderPresent(renderer);
 }
@@ -175,4 +177,8 @@ bool Affichage::initialiser(){
 
 void Affichage::setJoueur(Joueur* j){
     joueur = j;
+}
+
+SDL_Window* Affichage::getFenetre(){
+    return fenetre;
 }

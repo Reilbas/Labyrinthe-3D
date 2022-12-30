@@ -14,7 +14,7 @@ class Affichage {
         static const int ECRAN_LARGEUR = 1000;
         static const int ECRAN_HAUTEUR = 600;
     
-    private:
+    public:
         static Affichage* instance;
         static bool estInitialiser;
         SDL_Window* fenetre;
@@ -36,6 +36,7 @@ class Affichage {
         void setJoueur(Joueur* j);
         void afficher();
         void dessinerMur(int x, int y);
+        SDL_Window* getFenetre();
         //void dessinerMesh(mesh m);
 
     private:
