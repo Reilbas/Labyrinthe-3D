@@ -24,7 +24,7 @@ class Affichage {
         std::vector<Element> renderList;
         mat4x4 matriceProj;
 
-        vec3d lumiere = {0.0f,0.0f,-1.0f};
+        vec3d lumiere = {0.0f,-1.0f,0.0f};
 
         float n = 0;
 
@@ -35,9 +35,8 @@ class Affichage {
         static void detruire();
         void setJoueur(Joueur* j);
         void afficher();
-        void dessinerMur(int x, int y);
         SDL_Window* getFenetre();
-        //void dessinerMesh(mesh m);
+        void drawRect(float x, float y, float l, float h, SDL_Color &color);
 
     private:
         Affichage();

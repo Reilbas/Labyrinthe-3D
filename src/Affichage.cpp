@@ -54,27 +54,19 @@ bool Affichage::Init() {
     return true;
 }
 
-void Affichage::dessinerMur(int x, int y){
-    mesh cube = MeshMaker::Cube((float)x, (float)y, 0.0f);
-    for (auto tri : cube.tris){
-    }
-}
-
 void Affichage::afficher(){
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
     SDL_RenderClear(renderer);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
     mesh cube = MeshMaker::fromObj("cube.obj",0.0f, 0.0f, 0.0f, 1.0f);
 
-    mat4x4 matRotX = AllMath::rotMatX(n/4);
-    mat4x4 matRotZ = AllMath::rotMatZ(n/2);
-    mat4x4 matTrans = AllMath::transMat(0.0f, 0.0f, 3.0f);
-    mat4x4 matW;
-    matW = AllMath::matXmat(matRotZ, matRotX);
-    matW = AllMath::matXmat(matW, matTrans);
-
-    //joueur->maj();
+    //mat4x4 matRotX = AllMath::rotMatX(n/4);
+    //mat4x4 matRotZ = AllMath::rotMatZ(n/2);
+    //mat4x4 matTrans = AllMath::transMat(0.0f, 0.0f, 0.0f);
+    mat4x4 matW = AllMath::identMatrix();
+    //matW = AllMath::matXmat(matRotZ, matRotX);
+    //matW = AllMath::matXmat(matW, matTrans);
 
     mat4x4 matCam = AllMath::matPointAt(joueur->vCam, joueur->vTarget, joueur->vUp); // -- edit
     mat4x4 matView = AllMath::matrixQuickInverse(matCam);
@@ -154,7 +146,7 @@ void Affichage::afficher(){
             { SDL_FPoint{ tri.p[2].x, tri.p[2].y }, color }
         };
         SDL_RenderGeometry( renderer, nullptr, verts.data(), verts.size(), nullptr, 0);
-        // outline
+        // outline des triangles
         /*
         SDL_RenderDrawLine(renderer, tri.p[0].x, tri.p[0].y,
         tri.p[1].x, tri.p[1].y);
@@ -166,9 +158,25 @@ void Affichage::afficher(){
     }
     n+= 0.05f;
 
-
+    SDL_Color uiC = { 0, 255, 0, 255 };
+    this->drawRect(30,ECRAN_HAUTEUR-60, ECRAN_LARGEUR/4, 30, uiC);
     // render window
     SDL_RenderPresent(renderer);
+}
+
+void Affichage::drawRect(float x, float y, float l, float h, SDL_Color &color){
+    std::vector<SDL_Vertex> triUi1 = {
+        { SDL_FPoint{ x, y }, color },
+        { SDL_FPoint{ x + l, y }, color },
+        { SDL_FPoint{ x + l, y + h }, color },
+    };
+    std::vector<SDL_Vertex> triUi2 = {
+        { SDL_FPoint{ x , y }, color },
+        { SDL_FPoint{ x + l, y + h }, color },
+        { SDL_FPoint{ x, y + h }, color },
+    };
+    SDL_RenderGeometry(renderer, nullptr, triUi1.data(), triUi1.size(), nullptr, 0);
+    SDL_RenderGeometry(renderer, nullptr, triUi2.data(), triUi2.size(), nullptr, 0);
 }
 
 bool Affichage::initialiser(){
