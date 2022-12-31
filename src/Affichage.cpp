@@ -55,53 +55,52 @@ bool Affichage::Init() {
 }
 
 void Affichage::afficher(){
-    SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+    SDL_SetRenderDrawColor(renderer, 87, 205, 235, 255);
     SDL_RenderClear(renderer);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-    //mesh cube = MeshMaker::fromObj("cube.obj",0.0f, 0.0f, 0.0f, 1.0f);
-    //mesh cube = MeshMaker::fromObj("cubeR.obj", (float) i*2, 0.0f, (float) j*2, 1.0f);
-
-    
-    
     mat4x4 matW = AllMath::identMatrix();
-    
     mat4x4 matCam = AllMath::matPointAt(joueur->vCam, joueur->vTarget, joueur->vUp);
     mat4x4 matView = AllMath::matrixQuickInverse(matCam);
 
-    mat4x4 itemMotion = AllMath::transMat(0.0f, std::sin(n), 0.0f);
+    mat4x4 itemMotion = AllMath::transMat(0.0f, (std::sin(n)/2)-1.0f, 0.0f);
 
     std::vector<triangle> Ltri;
 
-    // gestion des murs
+    // Gestion des murs
     for(int i = 0 ; i < environement->getLongueur() ; i++){
         for(int j = 0 ; j < environement->getLargeur() ; j++){
             if(environement->getMurs()[i][j]){
-                mesh cube = MeshMaker::Cube((float) i, 0.0f, (float) j, 1.0f);
-                this->display(&Ltri, cube, matW, matView);
+                mesh cube = MeshMaker::Cube((float) i, -2.0f, (float) j, 1.0f, 1.0f);
+                this->display(&Ltri, cube, matW, matView, 157, 224, 126);
+            } else {
+                mesh tile = MeshMaker::Tile((float) i, 0.0f, (float) j, 1.0f);
+                this->display(&Ltri, tile, matW, matView, 235, 235, 235);
             }
         }
     }
 
-    // gestion des objets
+    // Gestion des objets
     for(auto e : environement->getObjets()){
-        this->display(&Ltri, e.geometry, itemMotion, matView);
+        this->display(&Ltri, e.geometry, itemMotion, matView, 242, 180, 24);
     }
 
+    // Triage des triangle par distance
     sort(Ltri.begin(), Ltri.end(), [](triangle &t1, triangle &t2){
         float z1 = (t1.p[0].z + t1.p[1].z + t1.p[2].z) / 3.0f;
         float z2 = (t2.p[0].z + t2.p[1].z + t2.p[2].z) / 3.0f;
         return z1 > z2;
     });
 
-    //Affichage
+    // Affichage
     this->displayTri(Ltri);
 
-    // var n;
+    // update var n;
     n+= 0.05f;
 
     SDL_Color uiC = { 0, 255, 0, 255 };
     this->drawRect(30,ECRAN_HAUTEUR-60, ECRAN_LARGEUR/4, 30, uiC);
+
     // render window
     SDL_RenderPresent(renderer);
 }
@@ -140,8 +139,8 @@ SDL_Window* Affichage::getFenetre(){
 void Affichage::displayTri(std::vector<triangle> lTri){
     for(auto &tri: lTri){
         // affichage face
-        Uint8 gradient = (Uint8) std::round(tri.dp*255);
-        SDL_Color color = { gradient, 0, 0, 255 };
+
+        SDL_Color color = { tri.r, tri.g, tri.b, 255 };
         
         std::vector<SDL_Vertex> verts = {
             { SDL_FPoint{ tri.p[0].x, tri.p[0].y }, color },
@@ -162,7 +161,7 @@ void Affichage::displayTri(std::vector<triangle> lTri){
     }
 }
 
-void Affichage::display(std::vector<triangle>* Ltri, mesh Mesh, mat4x4 matW, mat4x4 matView){
+void Affichage::display(std::vector<triangle>* Ltri, mesh Mesh, mat4x4 matW, mat4x4 matView, int red, int green, int blue){
     for(auto tri : Mesh.tris) {
         triangle triProjected, triTransfo, triView;
         triTransfo.p[0] = AllMath::matrixMultVector(matW, tri.p[0]);
@@ -181,7 +180,10 @@ void Affichage::display(std::vector<triangle>* Ltri, mesh Mesh, mat4x4 matW, mat
 
         if(AllMath::dotProd(normal, vCamRay) < 0.0f ) {
             vec3d li = AllMath::norm(lumiere);
-            triProjected.dp = std::max(0.1f, AllMath::dotProd(li, normal));
+            float dp = std::max(0.1f, AllMath::dotProd(li, normal));
+            triProjected.r = std::floor(red*dp);
+            triProjected.g = std::floor(green*dp);
+            triProjected.b = std::floor(blue*dp);
 
             triView.p[0] = AllMath::matrixMultVector(matView, triTransfo.p[0]);
             triView.p[1] = AllMath::matrixMultVector(matView, triTransfo.p[1]);

@@ -16,7 +16,7 @@ struct vec3d {
 
 struct triangle {
 	vec3d p[3];
-    float dp;
+    unsigned char r,g,b;
 };
 
 struct mesh {
@@ -26,7 +26,8 @@ struct mesh {
 class MeshMaker {
     // Constructeur et Méthodes
     public:
-        static mesh Cube(float x, float y, float z, float size);
+        static mesh Cube(float x, float y, float z, float h, float size);
+        static mesh Tile(float x, float y, float z, float size);
         static mesh fromObj(std::string nomfic,float x, float y, float z, float size);
 };
 

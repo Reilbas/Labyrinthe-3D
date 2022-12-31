@@ -13,17 +13,18 @@ class Jeu {
 
     private:
         static Jeu* instance;
-        bool quitter, mouseLock;
+        bool quitter, mouseLock, perdu;
         Affichage* affichage;
         Horloge* horloge;
         SDL_Event evenements;
+        Joueur* joueur;
         float lastMx;
 
     // Constructeur et Méthodes
     public:
         static Jeu* getInstance();
         static void detruire();
-        void run();
+        void run(char** niveaux, int nbNiveau);
         void checkItems(Joueur* j, Environement* env);
 
     private:

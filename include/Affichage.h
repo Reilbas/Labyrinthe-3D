@@ -42,8 +42,7 @@ class Affichage {
         SDL_Window* getFenetre();
         void drawRect(float x, float y, float l, float h, SDL_Color &color);
         void displayTri(std::vector<triangle> lTri);
-        void display(std::vector<triangle>* Ltri, mesh Mesh, mat4x4 matW, mat4x4 matView);
-
+        void display(std::vector<triangle>* Ltri, mesh Mesh, mat4x4 matW, mat4x4 matView, int red, int green, int blue);
     private:
         Affichage();
         ~Affichage();

@@ -50,7 +50,7 @@ Environement::Environement(Joueur* joueur, char** env, int Long, int larg){
             case 'I':
             case 'i':
                 // placement des objets
-                objets.push_back(  {(i+0.5f), 0.0f, (j+0.5f), MeshMaker::fromObj("icosphere.obj", (i+0.5f), 0.0f, (j+0.5f), 0.5f)}  ); // TODO changer le mesh
+                objets.push_back(  {(i+0.5f), 0.0f, (j+0.5f), MeshMaker::fromObj("icosphere.obj", (i+0.5f), 0.0f, (j+0.5f), 0.3f)}  ); // TODO changer le mesh
                 murs[i][j] = false;
                 break;
             case 'P':
@@ -65,7 +65,7 @@ Environement::Environement(Joueur* joueur, char** env, int Long, int larg){
                 murs[i][j] = false;
                 break;
             default:
-                std::cout << "Charactère non reconnus";
+                std::cout << "Charactere non reconnus\n";
                 break;
             }
         }

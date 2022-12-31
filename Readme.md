@@ -9,20 +9,23 @@ Implemented features:
 - Integration of a 3D view
 - Management of mouse events
 - Collectibles in maze
+- Play multiple maze
 
-Incomming features:
-- Maze maker or Saving your progress
+Possible features:
 - Main menu with options
 
 ## Build Project
 *Makefile update comming soon* 
 
-build (linux): ``$ g++ -L lib -I include ./src/*.cpp -o main -lSDL2main -lSDL2``
+build (linux): ``$ g++ -o main -I include src/*.cpp $(sdl2-config --cflags --libs)``
 
-build (windows): ``$ g++ -L lib -I include ./src/*.cpp -o main -lmingw32 -lSDL2main -lSDL2  -mwindows``
+build (windows): ``$ g++ -o main -L lib -I include ./src/*.cpp -lmingw32 -lSDL2main -lSDL2 ;``
 
-launch app: ``$ ./main``
-
+launch app: ``$ ./main {levels in order}``
 
 ## Create a maze
-***TODO**
+create a text file, then fill it with the following characters:
+- X : for a wall
+- O : for a floor tile
+- P : the place where the player will be placed
+- I : the objects to pick up

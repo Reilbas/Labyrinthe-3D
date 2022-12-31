@@ -3,7 +3,7 @@
 
 int main(int argv, char** args){
     Jeu *jeu = Jeu::getInstance();
-    jeu->run();
+    jeu->run(args, argv);
     
     Jeu::detruire();
     jeu = NULL;

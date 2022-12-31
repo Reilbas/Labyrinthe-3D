@@ -213,7 +213,9 @@ int AllMath::triangleClipAgainstPlane(vec3d plane_p, vec3d plane_n, triangle &in
         // the plane, the triangle simply becomes a smaller triangle
 
         // Copy appearance info to new triangle
-        out_tri1.dp =  in_tri.dp;
+        out_tri1.r = in_tri.r;
+        out_tri1.g = in_tri.g;
+        out_tri1.b = in_tri.b;
 
         // The inside point is valid, so keep that...
         out_tri1.p[0] = *inside_points[0];
@@ -232,8 +234,12 @@ int AllMath::triangleClipAgainstPlane(vec3d plane_p, vec3d plane_n, triangle &in
         // represent a quad with two new triangles
 
         // Copy appearance info to new triangles
-        out_tri1.dp =  in_tri.dp;
-        out_tri2.dp =  in_tri.dp;
+        out_tri1.r = in_tri.r;
+        out_tri1.g = in_tri.g;
+        out_tri1.b = in_tri.b;
+        out_tri2.r = in_tri.r;
+        out_tri2.g = in_tri.g;
+        out_tri2.b = in_tri.b;
 
         // The first triangle consists of the two inside points and a new
         // point determined by the location where one side of the triangle

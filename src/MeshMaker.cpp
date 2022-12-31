@@ -1,29 +1,38 @@
 #include "MeshMaker.h"
 
-mesh MeshMaker::Cube(float x, float y, float z, float size){
+mesh MeshMaker::Cube(float x, float y, float z, float h, float size){
     mesh m;
     m.tris = {
     	// Sud
-		{ x, y, z, 1,                 x, (y + size), z,1,                (x + size), (y + size), z,1           },
-		{ x, y, z, 1,                 (x + size), (y + size), z,1,          (x + size), y, z,1                  },
+		{ x, y, z, 1,                 x, (y + size) + h, z,1,                (x + size), (y + size) + h, z,1           },
+		{ x, y, z, 1,                 (x + size), (y + size) + h, z,1,          (x + size), y, z,1                  },
 
 		// Est                                                      
-		{ (x + size), y, z,1,           (x + size), (y + size), z,1,          (x + size), (y + size), (z + size),1    },
-		{ (x + size), y, z,1,           (x + size), (y + size), (z + size),1,   (x + size), y, (z + size),1           },
+		{ (x + size), y, z,1,           (x + size), (y + size) + h, z,1,          (x + size), (y + size) + h, (z + size),1    },
+		{ (x + size), y, z,1,           (x + size), (y + size) + h, (z + size),1,   (x + size), y, (z + size),1           },
 
 		// Nord                                                     
-		{ (x + size), y, (z + size),1,    (x + size), (y + size), (z + size),1,   x, (y + size), (z + size),1           },
-		{ (x + size), y, (z + size),1,    x, (y + size), (z + size),1,          x, y, (z + size),1                  },
+		{ (x + size), y, (z + size),1,    (x + size), (y + size) + h, (z + size),1,   x, (y + size) + h, (z + size),1           },
+		{ (x + size), y, (z + size),1,    x, (y + size) + h, (z + size),1,          x, y, (z + size),1                  },
 
 		// Ouest                                                      
-		{ x, y, (z + size),1,           x, (y + size), (z + size),1,          x, (y + size), z,1,                  },
-		{ x, y, (z + size),1,           x, (y + size), z,1,                 x, y, z,1,                         },
+		{ x, y, (z + size),1,           x, (y + size) + h, (z + size),1,          x, (y + size) + h, z,1,                  },
+		{ x, y, (z + size),1,           x, (y + size) + h, z,1,                 x, y, z,1,                         },
 
 		// Haut                                                       
-		{ x, (y + size), z,1,           x, (y + size), (z + size),1,          (x + size), (y + size), (z + size),1    },
-		{ x, (y + size), z,1,           (x + size), (y + size), (z + size),1,   (x + size), (y + size), z,1           },
+		{ x, (y + size) + h, z,1,           x, (y + size) + h, (z + size),1,          (x + size), (y + size) + h, (z + size),1    },
+		{ x, (y + size) + h, z,1,           (x + size), (y + size) + h, (z + size),1,   (x + size), (y + size) + h, z,1           },
 
 		// Bas                                                    
+		{ (x + size), y, (z + size),1,    x, y, (z + size),1,                 x, y, z,1                         },
+		{ (x + size), y, (z + size),1,    x, y, z,1,                        (x + size), y, z,1                  },
+    };
+    return m;
+}
+
+mesh MeshMaker::Tile(float x, float y, float z, float size){
+    mesh m;
+    m.tris = {
 		{ (x + size), y, (z + size),1,    x, y, (z + size),1,                 x, y, z,1                         },
 		{ (x + size), y, (z + size),1,    x, y, z,1,                        (x + size), y, z,1                  },
     };
