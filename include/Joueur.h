@@ -9,12 +9,9 @@
 class Joueur {
     // Attributs
     public:
-        int pv; // point de vie
+        int tempsRestant;
         vec3d vCam;
         float rotY;
-        
-        const float maxSpeed = 4.0f;
-        float speed = 0.0f;
 
         vec3d vUp = {0.0f,1.0f,0.0f};
         vec3d vTarget = {0.0f,0.0f,1.0f};
@@ -33,6 +30,7 @@ class Joueur {
         void gauche(bool** env, int L, int l);
         void rotationY(float a);
         void setPos(float nX, float nY, float nZ);
+        bool plusDeTemps();
         void print();
 };
 

@@ -1,6 +1,7 @@
 #include "Affichage.h"
 
 #define PI 3.14159265f
+#define TEMPSMAX 600.0f
 
 Affichage* Affichage::instance = NULL;
 bool Affichage::estInitialiser = false;
@@ -22,9 +23,16 @@ Affichage::Affichage(){
     joueur = nullptr;
     renderer = NULL;
     estInitialiser = Init();
+
+    // chargement de(s) texture(s)
+    image = SDL_LoadBMP("assets/SpritePinguin.bmp");
+    sprite = SDL_CreateTextureFromSurface(renderer, image);
 }
 
 Affichage::~Affichage(){
+    SDL_DestroyTexture(sprite);
+    SDL_FreeSurface(image);
+
     SDL_DestroyRenderer(renderer);
     renderer = NULL;
 
@@ -55,10 +63,14 @@ bool Affichage::Init() {
 }
 
 void Affichage::afficher(){
+    // nettoyage de l'ecran
     SDL_SetRenderDrawColor(renderer, 87, 205, 235, 255);
     SDL_RenderClear(renderer);
+
+    // changement de couleurs de dessins (pour les outlines et barre de temps)
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
+    // definition des matrices de calcul
     mat4x4 matW = AllMath::identMatrix();
     mat4x4 matCam = AllMath::matPointAt(joueur->vCam, joueur->vTarget, joueur->vUp);
     mat4x4 matView = AllMath::matrixQuickInverse(matCam);
@@ -72,17 +84,21 @@ void Affichage::afficher(){
         for(int j = 0 ; j < environement->getLargeur() ; j++){
             if(environement->getMurs()[i][j]){
                 mesh cube = MeshMaker::Cube((float) i, -2.0f, (float) j, 1.0f, 1.0f);
-                this->display(&Ltri, cube, matW, matView, 157, 224, 126);
+                this->display(&Ltri, cube, matW, matView, 157, 224, 126, true);
             } else {
                 mesh tile = MeshMaker::Tile((float) i, 0.0f, (float) j, 1.0f);
-                this->display(&Ltri, tile, matW, matView, 235, 235, 235);
+                if((i+j)%2){
+                    this->display(&Ltri, tile, matW, matView, 235, 235, 235, false);
+                } else{
+                    this->display(&Ltri, tile, matW, matView, 150, 150, 150, false);
+                }
             }
         }
     }
 
     // Gestion des objets
     for(auto e : environement->getObjets()){
-        this->display(&Ltri, e.geometry, itemMotion, matView, 242, 180, 24);
+        this->display(&Ltri, e.geometry, itemMotion, matView, 242, 180, 24, false);
     }
 
     // Triage des triangle par distance
@@ -92,56 +108,52 @@ void Affichage::afficher(){
         return z1 > z2;
     });
 
-    // Affichage
+    // Affichage 3D
     this->displayTri(Ltri);
 
-    // update var n;
-    n+= 0.05f;
+    // Affichage barre du temps restant
+    this->drawTimeRectangle(joueur->tempsRestant, ECRAN_HAUTEUR-60, 30);
 
-    SDL_Color uiC = { 0, 255, 0, 255 };
-    this->drawRect(30,ECRAN_HAUTEUR-60, ECRAN_LARGEUR/4, 30, uiC);
+    // Affichage du SpritePinguin
+    SDL_Rect rec = {ECRAN_LARGEUR/2 -40, ECRAN_HAUTEUR-150, 80, 80};
+    this->drawnSpritePinguin(rec, 7);
 
     // render window
     SDL_RenderPresent(renderer);
+
+    // update var n;
+    n+= 0.05f;
 }
 
-void Affichage::drawRect(float x, float y, float l, float h, SDL_Color &color){
+void Affichage::drawTimeRectangle(int n, float y, float h){
+    float ratioT = n/TEMPSMAX;
+    unsigned char posC = (char)(ratioT*255);
+    unsigned char minC = (char)(255-ratioT*255);
+    
+    SDL_Color color = { minC, posC, 0, 255 };
+
     std::vector<SDL_Vertex> triUi1 = {
-        { SDL_FPoint{ x, y }, color },
-        { SDL_FPoint{ x + l, y }, color },
-        { SDL_FPoint{ x + l, y + h }, color },
+        { SDL_FPoint{ ECRAN_LARGEUR/2 - (ECRAN_LARGEUR*ratioT)/2, y }, color },
+        { SDL_FPoint{ ECRAN_LARGEUR/2 + (ECRAN_LARGEUR*ratioT)/2, y }, color },
+        { SDL_FPoint{ ECRAN_LARGEUR/2 + (ECRAN_LARGEUR*ratioT)/2, y + h }, color },
     };
     std::vector<SDL_Vertex> triUi2 = {
-        { SDL_FPoint{ x , y }, color },
-        { SDL_FPoint{ x + l, y + h }, color },
-        { SDL_FPoint{ x, y + h }, color },
+        { SDL_FPoint{ ECRAN_LARGEUR/2 - (ECRAN_LARGEUR*ratioT)/2 , y }, color },
+        { SDL_FPoint{ ECRAN_LARGEUR/2 + (ECRAN_LARGEUR*ratioT)/2, y + h }, color },
+        { SDL_FPoint{ ECRAN_LARGEUR/2 - (ECRAN_LARGEUR*ratioT)/2, y + h }, color },
     };
     SDL_RenderGeometry(renderer, nullptr, triUi1.data(), triUi1.size(), nullptr, 0);
     SDL_RenderGeometry(renderer, nullptr, triUi2.data(), triUi2.size(), nullptr, 0);
-}
-
-bool Affichage::initialiser(){
-    return estInitialiser;
-}
-
-void Affichage::setJoueur(Joueur* j){
-    joueur = j;
-}
-
-void Affichage::setEnv(Environement* env){
-    environement = env;
-}
-
-SDL_Window* Affichage::getFenetre(){
-    return fenetre;
+    SDL_RenderDrawLine(renderer, ECRAN_LARGEUR/2 - (ECRAN_LARGEUR*ratioT)/2, y, ECRAN_LARGEUR/2 + (ECRAN_LARGEUR*ratioT)/2, y);
+    SDL_RenderDrawLine(renderer, ECRAN_LARGEUR/2 - (ECRAN_LARGEUR*ratioT)/2, y+h, ECRAN_LARGEUR/2 + (ECRAN_LARGEUR*ratioT)/2, y+h);
+    SDL_RenderDrawLine(renderer, ECRAN_LARGEUR/2 + (ECRAN_LARGEUR*ratioT)/2, y, ECRAN_LARGEUR/2 + (ECRAN_LARGEUR*ratioT)/2, y+h);
+    SDL_RenderDrawLine(renderer, ECRAN_LARGEUR/2 - (ECRAN_LARGEUR*ratioT)/2, y, ECRAN_LARGEUR/2 - (ECRAN_LARGEUR*ratioT)/2, y+h);
 }
 
 void Affichage::displayTri(std::vector<triangle> lTri){
     for(auto &tri: lTri){
         // affichage face
-
         SDL_Color color = { tri.r, tri.g, tri.b, 255 };
-        
         std::vector<SDL_Vertex> verts = {
             { SDL_FPoint{ tri.p[0].x, tri.p[0].y }, color },
             { SDL_FPoint{ tri.p[1].x, tri.p[1].y }, color },
@@ -149,8 +161,7 @@ void Affichage::displayTri(std::vector<triangle> lTri){
         };
         SDL_RenderGeometry( renderer, nullptr, verts.data(), verts.size(), nullptr, 0);
 
-        // affichage outline
-        /*
+        /*//affichage outline
         SDL_RenderDrawLine(renderer, tri.p[0].x, tri.p[0].y,
         tri.p[1].x, tri.p[1].y);
         SDL_RenderDrawLine(renderer, tri.p[1].x, tri.p[1].y,
@@ -161,7 +172,7 @@ void Affichage::displayTri(std::vector<triangle> lTri){
     }
 }
 
-void Affichage::display(std::vector<triangle>* Ltri, mesh Mesh, mat4x4 matW, mat4x4 matView, int red, int green, int blue){
+void Affichage::display(std::vector<triangle>* Ltri, mesh Mesh, mat4x4 matW, mat4x4 matView, int red, int green, int blue , bool castShadow){
     for(auto tri : Mesh.tris) {
         triangle triProjected, triTransfo, triView;
         triTransfo.p[0] = AllMath::matrixMultVector(matW, tri.p[0]);
@@ -179,11 +190,17 @@ void Affichage::display(std::vector<triangle>* Ltri, mesh Mesh, mat4x4 matW, mat
         vec3d vCamRay = AllMath::subVector(triTransfo.p[0], joueur->vCam);
 
         if(AllMath::dotProd(normal, vCamRay) < 0.0f ) {
-            vec3d li = AllMath::norm(lumiere);
-            float dp = std::max(0.1f, AllMath::dotProd(li, normal));
-            triProjected.r = std::floor(red*dp);
-            triProjected.g = std::floor(green*dp);
-            triProjected.b = std::floor(blue*dp);
+            if(castShadow){
+                vec3d li = AllMath::norm(lumiere);
+                float dp = std::max(0.1f, AllMath::dotProd(li, normal));
+                triProjected.r = std::floor(red*dp);
+                triProjected.g = std::floor(green*dp);
+                triProjected.b = std::floor(blue*dp);
+            }else{
+                triProjected.r = red;
+                triProjected.g = green;
+                triProjected.b = blue;
+            }
 
             triView.p[0] = AllMath::matrixMultVector(matView, triTransfo.p[0]);
             triView.p[1] = AllMath::matrixMultVector(matView, triTransfo.p[1]);
@@ -219,4 +236,26 @@ void Affichage::display(std::vector<triangle>* Ltri, mesh Mesh, mat4x4 matW, mat
             }
         }
     }
+}
+void Affichage::drawnSpritePinguin(SDL_Rect rec, int speed){
+    int xSprite = (int) ((n*speed)/8.0f) % 13; 
+    int ySprite = (int) (n*speed) % 8;
+    SDL_Rect s = {xSprite*(SPRITE_LARGEUR/13), ySprite*(SPRITE_HAUTEUR/8), SPRITE_LARGEUR/13, SPRITE_HAUTEUR/8};
+    SDL_RenderCopy(renderer, sprite, &s, &rec);
+}
+
+bool Affichage::initialiser(){
+    return estInitialiser;
+}
+
+void Affichage::setJoueur(Joueur* j){
+    joueur = j;
+}
+
+void Affichage::setEnv(Environement* env){
+    environement = env;
+}
+
+SDL_Window* Affichage::getFenetre(){
+    return fenetre;
 }

@@ -2,12 +2,14 @@
 #define speed 0.5f
 
 Joueur::Joueur(){
+    tempsRestant = 5*60;
     vCam = {0.0f, 0.0f, 0.0f};
     rotY = 0.0f;
     this->maj();
 }
 
 Joueur::Joueur(float x, float y, float z){
+    tempsRestant = 5*60;
     vCam = {x, y, z};
     rotY = 0.0f;
     this->maj();
@@ -79,4 +81,8 @@ void Joueur::rotationY(float a){
 
 void Joueur::print(){
     std::cout << "X:" << vCam.x << " Y:" << vCam.y << " Z:" << vCam.z << " Ry:" << rotY << std::endl;
+}
+
+bool Joueur::plusDeTemps(){
+    return tempsRestant<0;
 }

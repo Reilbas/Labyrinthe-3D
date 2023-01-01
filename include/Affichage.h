@@ -14,6 +14,12 @@ class Affichage {
     public:
         static const int ECRAN_LARGEUR = 1000;
         static const int ECRAN_HAUTEUR = 600;
+
+        const int SPRITE_LARGEUR = 2340;
+        const int SPRITE_HAUTEUR = 1400;
+
+        SDL_Surface* image;
+        SDL_Texture* sprite;
     
     public:
         static Affichage* instance;
@@ -22,7 +28,6 @@ class Affichage {
         SDL_Renderer * renderer;
         Joueur* joueur;
         Environement* environement;
-
 
         std::vector<Element> renderList;
         mat4x4 matriceProj;
@@ -36,13 +41,17 @@ class Affichage {
         static Affichage* getInstance();
         static bool initialiser();
         static void detruire();
+
         void setJoueur(Joueur* j);
         void setEnv(Environement* env);
+
         void afficher();
         SDL_Window* getFenetre();
-        void drawRect(float x, float y, float l, float h, SDL_Color &color);
+        void drawTimeRectangle(int n, float y, float h);
         void displayTri(std::vector<triangle> lTri);
-        void display(std::vector<triangle>* Ltri, mesh Mesh, mat4x4 matW, mat4x4 matView, int red, int green, int blue);
+        void display(std::vector<triangle>* Ltri, mesh Mesh, mat4x4 matW, mat4x4 matView, int red, int green, int blue, bool castShadow);
+        void drawnSpritePinguin(SDL_Rect rec, int speed);
+
     private:
         Affichage();
         ~Affichage();

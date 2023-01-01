@@ -13,7 +13,7 @@ class Jeu {
 
     private:
         static Jeu* instance;
-        bool quitter, mouseLock, perdu;
+        bool quitter, mouseLock, perdu, gagner;
         Affichage* affichage;
         Horloge* horloge;
         SDL_Event evenements;

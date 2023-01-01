@@ -110,11 +110,15 @@ void Jeu::run(char** niveaux, int nbNiveau){
                         break;
                     }
                 }
-                // Affichage
+                // Mise a jour et Affichage
                 if(horloge->getDelta() >= (1.0f / FRAMERATE)){
                     if(env->getObjets().size() == 0){
                         gagner = true;
                         niveauActuel++;
+                    }
+                    joueur->tempsRestant--;
+                    if(joueur->plusDeTemps()){
+                        perdu = true;
                     }
                     affichage->afficher();
                     horloge->reset();
@@ -124,7 +128,7 @@ void Jeu::run(char** niveaux, int nbNiveau){
         }
         else{
             free(data);
-            std::cout << "Le niveau n'a pas pu etre charger\n";
+            std::cout << "Le niveau n'a pas pu etre charge\n";
         }
     }
 }
@@ -134,6 +138,11 @@ void Jeu::checkItems(Joueur* j, Environement* env){
     for(int i = 0 ; i < obj.size() ; i++){
         if((std::floor(obj[i].posX) == std::floor(j->vCam.x)) && (std::floor(obj[i].posZ) == std::floor(j->vCam.z))){
             env->removeObj(i);
+            if(j->tempsRestant+120 > 600){
+                j->tempsRestant = 600; 
+            } else{
+                j->tempsRestant += 120;
+            }
         }
     }
 }
