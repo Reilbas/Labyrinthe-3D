@@ -37,7 +37,6 @@ Jeu::~Jeu(){
 }
 
 void Jeu::run(char** niveaux, int nbNiveau){
-    bool gagner = false;
     int niveauActuel = 1;
     while(!quitter && !perdu && niveauActuel < nbNiveau ){
         int L, l;
@@ -130,6 +129,13 @@ void Jeu::run(char** niveaux, int nbNiveau){
             free(data);
             std::cout << "Le niveau n'a pas pu etre charge\n";
         }
+    }
+    if(perdu){
+        affichage->perdu();
+        SDL_Delay(3000);
+    } else if(gagner){
+        affichage->gagner();
+        SDL_Delay(3000);
     }
 }
 

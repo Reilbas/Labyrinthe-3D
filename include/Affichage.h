@@ -20,6 +20,7 @@ class Affichage {
 
         SDL_Surface* image;
         SDL_Texture* sprite;
+        SDL_Texture* win;
     
     public:
         static Affichage* instance;
@@ -42,15 +43,17 @@ class Affichage {
         static bool initialiser();
         static void detruire();
 
-        void setJoueur(Joueur* j);
-        void setEnv(Environement* env);
-
         void afficher();
-        SDL_Window* getFenetre();
         void drawTimeRectangle(int n, float y, float h);
         void displayTri(std::vector<triangle> lTri);
         void display(std::vector<triangle>* Ltri, mesh Mesh, mat4x4 matW, mat4x4 matView, int red, int green, int blue, bool castShadow);
         void drawnSpritePinguin(SDL_Rect rec, int speed);
+        void perdu();
+        void gagner();
+
+        void setJoueur(Joueur* j);
+        void setEnv(Environement* env);
+        SDL_Window* getFenetre();
 
     private:
         Affichage();

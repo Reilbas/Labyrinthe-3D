@@ -25,13 +25,19 @@ Affichage::Affichage(){
     estInitialiser = Init();
 
     // chargement de(s) texture(s)
-    image = SDL_LoadBMP("assets/SpritePinguin.bmp");
-    sprite = SDL_CreateTextureFromSurface(renderer, image);
+    SDL_Surface* image1 = SDL_LoadBMP("assets/SpritePinguin.bmp");
+    SDL_Surface* image2 = SDL_LoadBMP("assets/Win.bmp");
+
+    sprite = SDL_CreateTextureFromSurface(renderer, image1);
+    win = SDL_CreateTextureFromSurface(renderer, image2);
+
+    SDL_FreeSurface(image1);
+    SDL_FreeSurface(image2);
 }
 
 Affichage::~Affichage(){
     SDL_DestroyTexture(sprite);
-    SDL_FreeSurface(image);
+    SDL_DestroyTexture(win);
 
     SDL_DestroyRenderer(renderer);
     renderer = NULL;
@@ -258,4 +264,21 @@ void Affichage::setEnv(Environement* env){
 
 SDL_Window* Affichage::getFenetre(){
     return fenetre;
+}
+
+void Affichage::perdu(){
+    n = 0;
+    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+    SDL_RenderClear(renderer);
+    SDL_Rect rec = {0, 0, ECRAN_LARGEUR, ECRAN_HAUTEUR};
+    this->drawnSpritePinguin(rec, 0);
+    SDL_RenderPresent(renderer);
+}
+
+void Affichage::gagner(){
+    SDL_SetRenderDrawColor(renderer, 33, 20, 1, 255);
+    SDL_RenderClear(renderer);
+    SDL_Rect rec = {ECRAN_LARGEUR/2 - ECRAN_HAUTEUR/2, 0, ECRAN_HAUTEUR, ECRAN_HAUTEUR};
+    SDL_RenderCopy(renderer, win, NULL, &rec);
+    SDL_RenderPresent(renderer);
 }
