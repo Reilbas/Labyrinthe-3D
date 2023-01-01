@@ -15,6 +15,7 @@ void Jeu::detruire(){
 }
 
 Jeu::Jeu(){
+    nbFrame = 0;
     quitter = false;
     mouseLock = false;
     perdu = false;
@@ -79,7 +80,7 @@ void Jeu::run(char** niveaux, int nbNiveau){
                                 break;
 
                             case SDLK_w:
-                                if(mouseLock == true){
+                                if(mouseLock){
                                     SDL_SetRelativeMouseMode(SDL_FALSE);
                                     mouseLock = false;
                                 }else{
@@ -87,11 +88,20 @@ void Jeu::run(char** niveaux, int nbNiveau){
                                     mouseLock = true;
                                 }
                                 break;
+
                             case SDLK_a:
                                 joueur->rotationY(0.5f);
                                 break;
                             case SDLK_e:
                                 joueur->rotationY(-0.5f);
+                                break;
+
+                            case SDLK_j:
+                                if(affichage->murVisible){
+                                    affichage->murVisible = false;
+                                }else{
+                                    affichage->murVisible = true;
+                                }
                                 break;
                         }
                         break;
@@ -111,11 +121,12 @@ void Jeu::run(char** niveaux, int nbNiveau){
                 }
                 // Mise a jour et Affichage
                 if(horloge->getDelta() >= (1.0f / FRAMERATE)){
+                    joueur->tempsRestant--;
+                    nbFrame++;
                     if(env->getObjets().size() == 0){
                         gagner = true;
                         niveauActuel++;
                     }
-                    joueur->tempsRestant--;
                     if(joueur->plusDeTemps()){
                         perdu = true;
                     }
@@ -128,13 +139,16 @@ void Jeu::run(char** niveaux, int nbNiveau){
         else{
             free(data);
             std::cout << "Le niveau n'a pas pu etre charge\n";
+            break;
         }
     }
     if(perdu){
         affichage->perdu();
+        std::cout << "AHAHA T'ES TROP NUL\nTemps de jeu: " << nbFrame/60 << "secondes \n";
         SDL_Delay(3000);
     } else if(gagner){
         affichage->gagner();
+        std::cout << "BIEN JOUER MON REUF\nTemps de jeu: " << nbFrame/60 << "secondes \n";
         SDL_Delay(3000);
     }
 }

@@ -33,6 +33,7 @@ Affichage::Affichage(){
 
     SDL_FreeSurface(image1);
     SDL_FreeSurface(image2);
+    murVisible = true;
 }
 
 Affichage::~Affichage(){
@@ -89,8 +90,10 @@ void Affichage::afficher(){
     for(int i = 0 ; i < environement->getLongueur() ; i++){
         for(int j = 0 ; j < environement->getLargeur() ; j++){
             if(environement->getMurs()[i][j]){
-                mesh cube = MeshMaker::Cube((float) i, -2.0f, (float) j, 1.0f, 1.0f);
-                this->display(&Ltri, cube, matW, matView, 157, 224, 126, true);
+                if(murVisible){
+                    mesh cube = MeshMaker::Cube((float) i, -2.0f, (float) j, 1.0f, 1.0f);
+                    this->display(&Ltri, cube, matW, matView, 157, 224, 126, true);
+                }
             } else {
                 mesh tile = MeshMaker::Tile((float) i, 0.0f, (float) j, 1.0f);
                 if((i+j)%2){

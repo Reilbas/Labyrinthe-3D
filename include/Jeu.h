@@ -19,6 +19,7 @@ class Jeu {
         SDL_Event evenements;
         Joueur* joueur;
         float lastMx;
+        int nbFrame;
 
     // Constructeur et Méthodes
     public:

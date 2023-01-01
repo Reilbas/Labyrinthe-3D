@@ -22,7 +22,6 @@ class Affichage {
         SDL_Texture* sprite;
         SDL_Texture* win;
     
-    public:
         static Affichage* instance;
         static bool estInitialiser;
         SDL_Window* fenetre;
@@ -36,6 +35,8 @@ class Affichage {
         vec3d lumiere = {-0.5f,-1.0f,-0.5f};
 
         float n = 0;
+
+        bool murVisible;
 
     // Constructeur et Méthodes
     public:
