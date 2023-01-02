@@ -15,13 +15,27 @@ Possible features:
 - Main menu with options
 
 ## Build Project
-*Makefile update comming soon* 
+build : ``$ make``
 
-build (linux): ``$ g++ -o main -I include src/*.cpp $(sdl2-config --cflags --libs)``
-
-build (windows): ``$ g++ -o main -L lib -I include ./src/*.cpp -lmingw32 -lSDL2main -lSDL2 ;``
+clean : ``$ make mrproper``
 
 launch app: ``$ ./main {levels in order}``
+
+## Play the game
+you must pick up all the floating orbs that are scattered in the labyrinth
+before the time runs out.
+
+The game controls are as follows:
+- Z to move foward
+- S to move backward
+- Q to move to your left
+- D to move to your right
+
+- A allows you to turn the camera to the left
+- E allows you to turn the camera to the right
+- W allows you to lock your mouse and turn the camera with it
+
+- There is also a secret key that allows you to see through walls
 
 ## Create a maze
 create a text file, then fill it with the following characters:

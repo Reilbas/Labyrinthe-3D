@@ -46,10 +46,8 @@ void Jeu::run(char** niveaux, int nbNiveau){
             gagner = false;
             Environement* env = new Environement(joueur, data, L, l);
             free(data);
-
             affichage->setJoueur(joueur);
             affichage->setEnv(env);
-
             while(!quitter && !perdu && !gagner){
                 // Mise à jour de l'horloge
                 horloge->update();

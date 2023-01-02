@@ -1,22 +1,18 @@
-GCC = g++
-CPPFLAGS = -Wall -I include
-LDFLAGS = -L lib -lmingw32 -lSDL2main -lSDL2 -mwindows
-# LDFLAGS = -L lib -lmingw32 -lSDL2main (only for linux)
+GPP = g++
+CXXFLAGS = -w
+LIBS =
+LDFLAGS = `sdl2-config --cflags --libs`
+INCLUDES = -I include
+EXEC = main
+SRC = src/*.cpp
+OBJ = $(SRC:.c=.o)
 
-Programme : main.o
-	$(GCC) main.o -o main $(LDFLAGS)
-
-main.o : src/main.cpp
-	$(GCC) $(CPPFLAGS) -c src/main.cpp -o main.o
-
-# Suppression des fichiers temporaires.
-clean :
-	del -rf *.o
-
-# Suppression de tous les fichiers, sauf les sources,
-# en vue d’une reconstruction complète.
-mrproper : clean
-	del main.exe
-
-# g++ -L lib -I include ./src/*.cpp -o main -lmingw32 -lSDL2main -lSDL2  -mwindows
-# TODO: mettre a jour le Makefile
+all: $(EXEC)
+main: $(OBJ)
+	$(GPP) $(CXXFLAGS) $(INCLUDES) -o $@ $^ $(LIBS) $(LDFLAGS)
+%.o: %.c
+	$(GPP) $(CXXFLAGS) -o $@ -c $<
+clean:
+	rm -rf *.o *~
+mrproper: clean
+	rm -rf $(EXEC)
