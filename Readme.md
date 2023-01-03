@@ -1,6 +1,6 @@
 # Labyrinthe 3d
 
-This is a school project where you can make a 3D maze that is built with an input file, you have to find the exit by moving with the mouse and keyboard. In this maze you will find objects and enemies.
+This is a school project where you can make a 3D maze that is built with an input file, you must pick up all the floating orbs that are scattered in the labyrinth before the time runs out.
 
 Implemented features:
 - Building an Environment
