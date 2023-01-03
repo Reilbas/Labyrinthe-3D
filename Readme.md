@@ -43,3 +43,5 @@ create a text file, then fill it with the following characters:
 - O : for a floor tile
 - P : the place where the player will be placed
 - I : the objects to pick up
+
+(See LevelCreator to create a level automatically)
