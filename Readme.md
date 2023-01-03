@@ -14,6 +14,10 @@ Implemented features:
 Possible features:
 - Main menu with options
 
+## Problem with previous linux versions 
+Some functions of the SDL library are not on the school's computers
+https://stackoverflow.com/questions/74965014/sdl-vertex-and-sdl-rendergeometry-not-found
+
 ## Build Project
 build : ``$ make``
 
