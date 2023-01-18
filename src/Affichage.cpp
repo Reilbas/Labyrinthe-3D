@@ -140,7 +140,6 @@ void Affichage::drawTimeRectangle(int n, float y, float h){
     unsigned char minC = (char)(255-ratioT*255);
     
     SDL_Color color = { minC, posC, 0, 255 };
-    /*
     std::vector<SDL_Vertex> triUi1 = {
         { SDL_FPoint{ ECRAN_LARGEUR/2 - (ECRAN_LARGEUR*ratioT)/2, y }, color },
         { SDL_FPoint{ ECRAN_LARGEUR/2 + (ECRAN_LARGEUR*ratioT)/2, y }, color },
@@ -153,7 +152,6 @@ void Affichage::drawTimeRectangle(int n, float y, float h){
     };
     SDL_RenderGeometry(renderer, nullptr, triUi1.data(), triUi1.size(), nullptr, 0);
     SDL_RenderGeometry(renderer, nullptr, triUi2.data(), triUi2.size(), nullptr, 0);
-    */
     SDL_RenderDrawLine(renderer, ECRAN_LARGEUR/2 - (ECRAN_LARGEUR*ratioT)/2, y, ECRAN_LARGEUR/2 + (ECRAN_LARGEUR*ratioT)/2, y);
     SDL_RenderDrawLine(renderer, ECRAN_LARGEUR/2 - (ECRAN_LARGEUR*ratioT)/2, y+h, ECRAN_LARGEUR/2 + (ECRAN_LARGEUR*ratioT)/2, y+h);
     SDL_RenderDrawLine(renderer, ECRAN_LARGEUR/2 + (ECRAN_LARGEUR*ratioT)/2, y, ECRAN_LARGEUR/2 + (ECRAN_LARGEUR*ratioT)/2, y+h);
@@ -162,7 +160,7 @@ void Affichage::drawTimeRectangle(int n, float y, float h){
 
 void Affichage::displayTri(std::vector<triangle> lTri){
     for(auto &tri: lTri){
-        /*// affichage face
+        // affichage face
         SDL_Color color = { tri.r, tri.g, tri.b, 255 };
         std::vector<SDL_Vertex> verts = {
             { SDL_FPoint{ tri.p[0].x, tri.p[0].y }, color },
@@ -170,14 +168,15 @@ void Affichage::displayTri(std::vector<triangle> lTri){
             { SDL_FPoint{ tri.p[2].x, tri.p[2].y }, color }
         };
         SDL_RenderGeometry( renderer, nullptr, verts.data(), verts.size(), nullptr, 0);
-        */
         //affichage outline
+        /*
         SDL_RenderDrawLine(renderer, tri.p[0].x, tri.p[0].y,
         tri.p[1].x, tri.p[1].y);
         SDL_RenderDrawLine(renderer, tri.p[1].x, tri.p[1].y,
         tri.p[2].x, tri.p[2].y);
         SDL_RenderDrawLine(renderer, tri.p[2].x, tri.p[2].y,
         tri.p[0].x, tri.p[0].y);
+        */
     }
 }
 
